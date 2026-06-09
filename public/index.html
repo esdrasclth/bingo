@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bingo PRO</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>🎱 BINGO PRO</h1>
+
+<h3>👥 Conectados: <span id="players">0</span></h3>
+
+<h3 id="status">🎯 Patrón: FULL</h3>
+
+<h2>🎲 Número actual</h2>
+<div id="current"></div>
+
+<h2>🎫 Tu cartón ID: <span id="cardId"></span></h2>
+<div id="card"></div>
+
+<button onclick="checkBingo()">🏆 BINGO</button>
+
+<div id="confetti" style="display:none;">🎉 ¡GANASTE! 🎉</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="client.js"></script>
+
+</body>
+</html>
