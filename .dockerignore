@@ -1,0 +1,19 @@
+# node_modules está versionado en el repo, pero la imagen instala limpio
+# con `npm ci`: copiarlo rompería las builds nativas y engorda el contexto
+node_modules
+npm-debug.log*
+
+# Credenciales: en Dokploy van como variables de entorno, nunca en la imagen
+.env
+.env.local
+.env*.local
+.neon
+
+.git
+.gitignore
+Dockerfile
+.dockerignore
+
+# Material de trabajo que no hace falta en producción
+branding
+*.md

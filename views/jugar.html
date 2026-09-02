@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Únete a la partida · Bingo PRO</title>
+    <meta name="description" content="Abre tu cartón y únete a una partida multijugador de Bingo PRO en tiempo real.">
+    <meta name="application-name" content="Bingo PRO">
+    <meta name="theme-color" content="#008253">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Bingo PRO">
+    <meta name="msapplication-TileColor" content="#008253">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+
+    <link rel="canonical" href="{{PAGE_URL}}">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="icon" href="/branding/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/branding/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/branding/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/branding/apple-touch-icon.png">
+
+    <meta property="og:site_name" content="Bingo PRO">
+    <meta property="og:title" content="Únete a una partida de Bingo PRO">
+    <meta property="og:description" content="Abre tu cartón y juega al bingo en tiempo real desde tu móvil.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_HN">
+    <meta property="og:url" content="{{PAGE_URL}}">
+    <meta property="og:image" content="{{ORIGIN}}/branding/og-cover.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Bingo PRO: crea una partida, comparte el enlace y juega con tus amigos.">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Únete a una partida de Bingo PRO">
+    <meta name="twitter:description" content="Abre tu cartón y juega al bingo en tiempo real desde tu móvil.">
+    <meta name="twitter:image" content="{{ORIGIN}}/branding/og-cover.png">
+    <meta name="twitter:image:alt" content="Bingo PRO: bingo multijugador en tiempo real.">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div id="avisos" class="avisos" role="status" aria-live="polite"></div>
+
+<!-- Sala inexistente o cerrada -->
+<section id="sinSala" class="puerta" hidden>
+    <h1 class="display">Partida no encontrada</h1>
+    <p class="apunte">El código <b id="codigoFallido"></b> no corresponde a ninguna partida abierta. Puede que ya haya terminado.</p>
+    <a class="boton-enlace" href="/">Volver al inicio</a>
+</section>
+
+<!-- Nombre, antes de sentarse a la mesa -->
+<section id="puertaNombre" class="puerta" hidden>
+    <h1 class="display">¿Cómo te llamas?</h1>
+    <p class="apunte">Así sabremos a quién felicitar cuando cantes bingo.</p>
+
+    <form id="nombreForm" class="auth">
+        <label class="sr-only" for="nombre">Tu nombre</label>
+        <input id="nombre" name="nombre" type="text" autocomplete="nickname"
+               maxlength="20" placeholder="Tu nombre" required>
+        <button type="submit" class="naranja">Entrar a jugar</button>
+    </form>
+</section>
+
+<div id="app" class="envoltura" hidden>
+
+    <header class="cabecera">
+        <h1 class="display">Bingo Pro</h1>
+
+        <div class="datos">
+            <span class="dato">
+                <span class="punto" id="puntoConexion"></span>
+                <span id="textoConexion">En línea</span>
+            </span>
+            <span class="dato">Sala <b id="codigoSala">—</b></span>
+            <span class="dato" id="datoNombre">—</span>
+            <span class="dato">Jugando <b id="players">0</b></span>
+            <span class="dato">Cartón <b id="cardId">—</b></span>
+        </div>
+
+        <p class="estado" id="estadoPartida" hidden>Partida terminada</p>
+    </header>
+
+    <div class="juego">
+
+        <section class="tablero zona-numero">
+            <p class="etiqueta">Número cantado</p>
+            <p class="bola-grande" id="current" aria-live="polite"></p>
+
+            <span class="patron">
+                <span class="mini" id="miniPatron" aria-hidden="true"></span>
+                <span id="status">Cartón lleno</span>
+            </span>
+
+            <p class="progreso" id="progreso" aria-live="polite"></p>
+        </section>
+
+        <div class="zona-carton">
+            <div id="carton" class="carton">
+                <div class="carton-cab" aria-hidden="true">
+                    <span>B</span><span>I</span><span>N</span><span>G</span><span>O</span>
+                </div>
+                <div id="rejilla" class="carton-rejilla" role="grid" aria-label="Tu cartón de bingo"></div>
+            </div>
+
+            <div class="barra-bingo">
+                <button id="bingoBtn" class="naranja" onclick="checkBingo()">🏆 ¡Bingo!</button>
+            </div>
+        </div>
+
+        <section class="zona-ultimas">
+            <p class="etiqueta">Últimas bolas</p>
+            <div id="ultimas" class="ultimas"></div>
+            <button id="vozBtn" class="secundario chico" onclick="alternarVoz(this)">🔇 Voz apagada</button>
+        </section>
+
+    </div>
+</div>
+
+<div id="winner" class="winner" hidden>
+    <div class="winner-caja">
+        <p class="winner-title"></p>
+        <p class="winner-sub"></p>
+        <button class="secundario" onclick="cerrarGanador()">Cerrar</button>
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/sala.js"></script>
+<script src="/client.js"></script>
+
+</body>
+</html>

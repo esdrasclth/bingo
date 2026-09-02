@@ -1,29 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Bingo PRO</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Bingo PRO · Bingo multijugador en tiempo real</title>
+    <meta name="description" content="Crea una partida de bingo en un minuto, comparte el enlace y juega con quien quieras desde el móvil.">
+    <meta name="application-name" content="Bingo PRO">
+    <meta name="theme-color" content="#008253">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Bingo PRO">
+    <meta name="msapplication-TileColor" content="#008253">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+
+    <link rel="canonical" href="{{PAGE_URL}}">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="icon" href="/branding/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/branding/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/branding/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/branding/apple-touch-icon.png">
+
+    <meta property="og:site_name" content="Bingo PRO">
+    <meta property="og:title" content="Bingo PRO · Bingo multijugador en tiempo real">
+    <meta property="og:description" content="Crea una partida, comparte el enlace y juega al bingo con tus amigos desde el móvil.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_HN">
+    <meta property="og:url" content="{{PAGE_URL}}">
+    <meta property="og:image" content="{{ORIGIN}}/branding/og-cover.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Bingo PRO: crea una partida, comparte el enlace y juega con tus amigos.">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Bingo PRO · Bingo multijugador en tiempo real">
+    <meta name="twitter:description" content="Crea una partida, comparte el enlace y juega al bingo con tus amigos desde el móvil.">
+    <meta name="twitter:image" content="{{ORIGIN}}/branding/og-cover.png">
+    <meta name="twitter:image:alt" content="Bingo PRO: bingo multijugador en tiempo real.">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>🎱 BINGO PRO</h1>
+<div id="avisos" class="avisos" role="status" aria-live="polite"></div>
 
-<h3>👥 Conectados: <span id="players">0</span></h3>
+<div class="envoltura portada">
 
-<h3 id="status">🎯 Patrón: FULL</h3>
+    <header class="cabecera">
+        <h1 class="display">Bingo Pro</h1>
+        <p class="apunte">Crea una partida, comparte el enlace y a jugar.</p>
+    </header>
 
-<h2>🎲 Número actual</h2>
-<div id="current"></div>
+    <!-- Paso 1: crear o unirse -->
+    <section id="inicio" class="panel">
+        <h2 class="display">Nueva partida</h2>
+        <p class="apunte">Serás el anfitrión: tú cantas las bolas y eliges el patrón.</p>
 
-<h2>🎫 Tu cartón ID: <span id="cardId"></span></h2>
-<div id="card"></div>
+        <button id="crearBtn" class="naranja" onclick="crearPartida()">🎉 Crear partida</button>
 
-<button onclick="checkBingo()">🏆 BINGO</button>
+        <hr class="separador">
 
-<div id="confetti" style="display:none;">🎉 ¡GANASTE! 🎉</div>
+        <h2 class="display">¿Te han invitado?</h2>
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="client.js"></script>
+        <form id="unirseForm" class="auth">
+            <label class="sr-only" for="codigo">Código de la partida</label>
+            <input id="codigo" name="codigo" type="text" inputmode="latin"
+                   autocomplete="off" autocapitalize="characters" spellcheck="false"
+                   maxlength="5" placeholder="CÓDIGO" class="campo-codigo" required>
+            <button type="submit" class="secundario">Unirme</button>
+        </form>
+    </section>
+
+    <!-- Paso 2: partida creada -->
+    <section id="creada" class="panel" hidden>
+        <h2 class="display">¡Partida lista!</h2>
+
+        <p class="etiqueta">Código de la partida</p>
+        <p class="codigo-grande" id="codigoCreado"></p>
+
+        <div class="enlaces">
+            <div class="enlace">
+                <p class="etiqueta">Enlace para jugadores</p>
+                <p class="apunte">Compártelo con quien vaya a jugar.</p>
+                <code class="url" id="urlJugar"></code>
+                <button class="secundario" onclick="copiar('urlJugar', this)">Copiar enlace</button>
+            </div>
+
+            <div class="enlace">
+                <p class="etiqueta">Enlace para proyectar</p>
+                <p class="apunte">Ábrelo en la pantalla que comparta la reunión.</p>
+                <code class="url" id="urlPantalla"></code>
+                <button class="secundario" onclick="copiar('urlPantalla', this)">Copiar enlace</button>
+            </div>
+        </div>
+
+        <div class="aviso-token">
+            <p class="etiqueta">Tu token de anfitrión</p>
+            <code class="url" id="tokenAdmin"></code>
+            <p class="apunte">Guárdalo. Lo necesitas para volver al panel desde otro navegador, y no se puede recuperar.</p>
+            <button class="secundario" onclick="copiar('tokenAdmin', this)">Copiar token</button>
+        </div>
+
+        <button class="naranja" id="irPanel">👑 Abrir mi panel</button>
+    </section>
+
+</div>
+
+<script src="landing.js"></script>
 
 </body>
 </html>

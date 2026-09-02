@@ -1,0 +1,10 @@
+node_modules/
+npm-debug.log*
+
+# Credenciales de Neon: .env.local lo escribe `neon link`
+.env
+.env.local
+.env*.local
+.neon
+
+.DS_Store

@@ -1,17 +1,23 @@
 {
-  "name": "bingo",
+  "name": "bingo-pro",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Bingo multijugador en tiempo real con salas, panel de anfitrión y pantalla de proyección.",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "qrcode": "^1.5.4",
     "socket.io": "^4.8.3"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

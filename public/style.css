@@ -1,29 +1,1141 @@
+/* ═══════════════════════════════════════════════════════════════
+   BINGO PRO — identidad visual tomada de /branding
+   Paleta y tipografía extraídas de "Bingo Games Presentation".
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Tipografía autoalojada (Google Fonts, licencia OFL) ── */
+
+@font-face {
+    font-family: "Quicksand";
+    src: url("fonts/quicksand-latin.woff2") format("woff2");
+    font-weight: 500 700;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+                   U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191,
+                   U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: "Quicksand";
+    src: url("fonts/quicksand-latin-ext.woff2") format("woff2");
+    font-weight: 500 700;
+    font-display: swap;
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7,
+                   U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+                   U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+                   U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("fonts/poppins-700-latin.woff2") format("woff2");
+    font-weight: 700;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+                   U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191,
+                   U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("fonts/poppins-700-latin-ext.woff2") format("woff2");
+    font-weight: 700;
+    font-display: swap;
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7,
+                   U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+                   U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+                   U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ── Tokens ── */
+
+:root {
+    /* Colores del deck */
+    --crema:      #FFFBE5;
+    --crema-2:    #FCF9F2;
+    --verde:      #008253;
+    --verde-osc:  #00663F;
+    --naranja:    #FF751F;
+    --naranja-2:  #F1A454;
+    --melocoton:  #F9BD7E;
+    --rosa:       #FFB3F7;
+    --navy:       #193F56;
+    --vino:       #6D0D0F;
+    --rojo:       #94061E;
+    --cyan:       #00A1D4;
+    --cyan-claro: #ACDEE6;
+
+    --display: "Poppins", "Trebuchet MS", system-ui, sans-serif;
+    --texto:   "Quicksand", ui-rounded, "Segoe UI", system-ui, sans-serif;
+
+    /* Formas: contorno grueso y radios generosos, como en el deck */
+    --borde:      3px solid var(--navy);
+    --borde-fino: 2px solid var(--navy);
+    --r-pastilla: 999px;
+    --r-panel:    clamp(20px, 4vw, 32px);
+    --r-casilla:  clamp(10px, 2.4vw, 16px);
+    --sombra:     0 4px 0 var(--navy);
+    --sombra-alta: 0 6px 0 var(--navy);
+
+    --hueco:  clamp(0.75rem, 3vw, 1.5rem);
+    --margen: clamp(1rem, 4vw, 2.5rem);
+}
+
+* { box-sizing: border-box; }
+
+/* Cualquier clase con display propio (.envoltura, .winner…) ganaría a la regla
+   [hidden] del navegador, así que la reforzamos una sola vez aquí. */
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; }
+
 body {
-    font-family: Arial;
+    margin: 0;
+    padding: 3.5rem var(--margen) calc(2rem + env(safe-area-inset-bottom));
+    background: var(--crema);
+    color: var(--navy);
+    font-family: var(--texto);
+    font-size: clamp(15px, 2.6vw, 17px);
+    font-weight: 500;
+    line-height: 1.5;
     text-align: center;
-    background: #0b0f19;
-    color: white;
+    min-height: 100vh;
 }
 
-table {
-    margin: auto;
-    border-collapse: collapse;
+/* ── Tipografía display: verde con sombra sólida naranja ── */
+
+.display {
+    font-family: var(--display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    line-height: 0.95;
+    color: var(--verde);
+    text-shadow: 3px 3px 0 var(--naranja-2);
+    margin: 0;
+    text-wrap: balance;
 }
 
-td {
-    border: 1px solid white;
-    padding: 10px;
-    width: 45px;
-    height: 45px;
+h1.display { font-size: clamp(1.9rem, 7.5vw, 3.1rem); }
+h2.display { font-size: clamp(1.1rem, 3.6vw, 1.45rem); text-shadow: 2px 2px 0 var(--naranja-2); }
+
+.etiqueta {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(0.62rem, 2.1vw, 0.72rem);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--navy);
+    opacity: 0.65;
+    margin: 0;
+}
+
+.apunte { color: var(--navy); opacity: 0.75; font-size: 0.94em; margin: 0; }
+
+/* ── Estructura ── */
+
+.envoltura {
+    max-width: 1180px;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--hueco);
+    padding-top: var(--hueco);
+}
+
+.cabecera {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Por defecto (móvil) una sola columna, con el número cantado arriba del todo:
+   es la información que el jugador necesita ver sin desplazarse. */
+.juego {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hueco);
+}
+
+.zona-carton {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hueco);
+}
+
+.zona-numero  { order: -1; }
+.zona-ultimas { order: 1; }
+
+/* Fila de datos: conectados, cartón, conexión */
+.datos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.dato {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--crema-2);
+    border: var(--borde-fino);
+    border-radius: var(--r-pastilla);
+    padding: 0.35rem 0.9rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.dato b { font-family: var(--display); font-variant-numeric: tabular-nums; }
+
+.punto {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--verde);
+    border: 1px solid var(--navy);
+    flex: 0 0 auto;
+}
+
+.punto.caido { background: var(--rojo); }
+
+/* ── Panel del número cantado ── */
+
+.tablero {
+    background: var(--verde);
+    border: var(--borde);
+    border-radius: var(--r-panel);
+    box-shadow: var(--sombra-alta);
+    color: var(--crema);
+    padding: clamp(0.9rem, 3vw, 1.5rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tablero .etiqueta { color: var(--crema); opacity: 0.8; }
+
+.bola-grande {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(2.6rem, 13vw, 4.6rem);
+    line-height: 1;
+    color: var(--crema);
+    text-shadow: 3px 3px 0 var(--verde-osc);
+    font-variant-numeric: tabular-nums;
+    min-height: 1em;
+    letter-spacing: 0.01em;
+}
+
+.bola-grande:empty::after {
+    content: "—";
+    opacity: 0.4;
+}
+
+/* Patrón activo, en pastilla rosa como los resaltes del deck */
+.patron {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--rosa);
+    border: var(--borde-fino);
+    border-radius: var(--r-pastilla);
+    padding: 0.3rem 0.9rem;
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+/* Miniatura 5x5 del patrón de victoria */
+.mini {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    width: 34px;
+    aspect-ratio: 1;
+    flex: 0 0 auto;
+}
+
+.mini i {
+    background: rgba(25, 63, 86, 0.18);
+    border-radius: 1px;
+}
+
+.mini i.on { background: var(--verde); }
+
+/* ── Últimas bolas ── */
+
+.ultimas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: center;
+}
+
+.bola {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.1rem;
+    height: 2.1rem;
+    padding: 0 0.35rem;
+    border-radius: 50%;
+    background: var(--crema-2);
+    border: var(--borde-fino);
+    font-family: var(--display);
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--navy);
+}
+
+.bola.reciente {
+    background: var(--naranja);
+    color: var(--crema);
+    box-shadow: 0 2px 0 var(--navy);
+}
+
+/* ═══════════ CARTÓN — fluido, sin anchos fijos ═══════════ */
+
+.carton {
+    width: min(100%, 460px);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(4px, 1.2vw, 8px);
+}
+
+.carton-cab,
+.carton-rejilla {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: clamp(4px, 1.2vw, 8px);
+}
+
+.carton-cab span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(1.1rem, 5vw, 1.8rem);
+    color: var(--crema);
+    background: var(--verde);
+    border: var(--borde-fino);
+    border-radius: var(--r-casilla);
+    padding: clamp(0.1rem, 1vw, 0.3rem) 0;
+    box-shadow: 0 3px 0 var(--navy);
+}
+
+.casilla {
+    /* La celda se dimensiona sola con el ancho disponible */
+    aspect-ratio: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(0.85rem, 4.2vw, 1.45rem);
+    font-variant-numeric: tabular-nums;
+
+    color: var(--navy);
+    background: var(--crema-2);
+    border: var(--borde-fino);
+    border-radius: var(--r-casilla);
+    padding: 0;
     cursor: pointer;
+
+    /* Detalles táctiles (R-4) */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+
+    transition: background .14s ease, color .14s ease,
+                transform .14s ease, box-shadow .14s ease;
 }
 
-.marked {
-    background: green;
-    color: white;
+.casilla:hover:not(:disabled) { background: var(--cyan-claro); }
+
+.casilla.marcada {
+    background: var(--verde);
+    color: var(--crema);
+    box-shadow: inset 0 0 0 2px var(--crema);
 }
 
-#confetti {
-    font-size: 30px;
-    margin-top: 20px;
+/* La casilla que coincide con la bola recién cantada */
+.casilla.cantada {
+    background: var(--melocoton);
+    color: var(--vino);
+    animation: latido 1s ease-in-out infinite;
+}
+
+.casilla.libre {
+    background: var(--rosa);
+    color: var(--navy);
+    cursor: default;
+    font-size: clamp(0.6rem, 2.6vw, 0.9rem);
+}
+
+.casilla:focus-visible {
+    outline: 3px solid var(--naranja);
+    outline-offset: 2px;
+}
+
+.carton.bloqueado .casilla { cursor: default; opacity: 0.55; }
+
+@keyframes latido {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.07); }
+}
+
+/* ═══════════ BOTONES ═══════════ */
+
+button {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(0.9rem, 2.8vw, 1rem);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+
+    color: var(--crema);
+    background: var(--verde);
+    border: var(--borde);
+    border-radius: var(--r-pastilla);
+
+    /* Superficie táctil cómoda (R-4) */
+    min-height: 48px;
+    padding: 0.7rem 1.6rem;
+
+    cursor: pointer;
+    box-shadow: var(--sombra);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform .12s ease, box-shadow .12s ease, background .14s ease;
+}
+
+button:hover:not(:disabled) { background: var(--verde-osc); }
+
+button:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 var(--navy);
+}
+
+button:focus-visible {
+    outline: 3px solid var(--naranja);
+    outline-offset: 3px;
+}
+
+button:disabled {
+    background: var(--crema-2);
+    color: rgba(25, 63, 86, 0.45);
+    box-shadow: 0 4px 0 rgba(25, 63, 86, 0.35);
+    border-color: rgba(25, 63, 86, 0.35);
+    cursor: not-allowed;
+}
+
+button.naranja:not(:disabled) { background: var(--naranja); }
+button.naranja:hover:not(:disabled) { background: #E9600F; }
+
+button.secundario:not(:disabled) {
+    background: var(--crema-2);
+    color: var(--navy);
+}
+
+button.secundario:hover:not(:disabled) { background: var(--melocoton); }
+
+/* Botón BINGO: siempre al alcance del pulgar */
+.barra-bingo {
+    position: sticky;
+    bottom: 0;
+    z-index: 30;
+    padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom));
+    background: linear-gradient(to top, var(--crema) 62%, transparent);
+}
+
+/* Sin background aquí: un selector de ID ganaría a button:disabled y el botón
+   bloqueado seguiría pareciendo activo. El color va en la clase .naranja. */
+#bingoBtn {
+    width: min(100%, 460px);
+    min-height: 58px;
+    font-size: clamp(1.1rem, 4.4vw, 1.4rem);
+    letter-spacing: 0.06em;
+}
+
+/* ═══════════ AVISOS ═══════════ */
+
+.avisos {
+    position: fixed;
+    top: calc(0.75rem + env(safe-area-inset-top));
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(92vw, 440px);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 50;
+    pointer-events: none;
+}
+
+.toast {
+    /* Navy sólido: el aviso puede solaparse con el título, así que necesita
+       leerse como una capa por encima, no fundirse con el fondo crema. */
+    background: var(--navy);
+    color: var(--crema);
+    border: var(--borde-fino);
+    border-radius: var(--r-pastilla);
+    box-shadow: var(--sombra);
+    padding: 0.7rem 1.1rem;
+    font-weight: 700;
+    font-size: 0.94rem;
+    animation: entra .25s ease;
+}
+
+.toast.error { background: var(--melocoton); color: var(--vino); }
+.toast.ok    { background: var(--verde);     color: var(--crema); }
+.toast.saliendo { opacity: 0; transition: opacity .3s ease; }
+
+@keyframes entra {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════ PANEL DE GANADOR ═══════════ */
+
+.winner {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--margen);
+    background: rgba(25, 63, 86, 0.55);
+}
+
+.winner[hidden] { display: none; }
+
+.winner-caja {
+    background: var(--crema);
+    border: var(--borde);
+    border-radius: var(--r-panel);
+    box-shadow: var(--sombra-alta);
+    padding: clamp(1.5rem, 6vw, 2.5rem);
+    width: min(100%, 420px);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.winner-title {
+    font-family: var(--display);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: clamp(1.5rem, 7vw, 2.1rem);
+    line-height: 1;
+    color: var(--verde);
+    text-shadow: 3px 3px 0 var(--naranja-2);
+    margin: 0;
+}
+
+.winner-sub { margin: 0; color: var(--navy); }
+
+/* ═══════════ ESTADO DE PARTIDA ═══════════ */
+
+.estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--melocoton);
+    color: var(--vino);
+    border: var(--borde-fino);
+    border-radius: var(--r-pastilla);
+    padding: 0.35rem 1rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin: 0;
+    align-self: center;
+}
+
+.estado[hidden] { display: none; }
+
+/* ═══════════ ADMIN ═══════════ */
+
+.puerta {
+    width: min(100%, 380px);
+    margin: 6vh auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+.auth {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+input[type="password"],
+input[type="text"],
+select {
+    font-family: var(--texto);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--navy);
+    background: var(--crema-2);
+    border: var(--borde-fino);
+    border-radius: var(--r-pastilla);
+    padding: 0.75rem 1.1rem;
+    min-height: 48px;
+    width: 100%;
+    text-align: center;
+}
+
+input[type="password"]:focus-visible,
+input[type="text"]:focus-visible,
+select:focus-visible {
+    outline: 3px solid var(--naranja);
+    outline-offset: 2px;
+}
+
+.panel {
+    background: var(--crema-2);
+    border: var(--borde);
+    border-radius: var(--r-panel);
+    box-shadow: var(--sombra-alta);
+    padding: clamp(1rem, 3.5vw, 1.6rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    align-items: center;
+}
+
+/* Móvil: el orden es el del DOM — patrón, bolas, compartir, mesa */
+.juego-admin {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hueco);
+}
+
+/* Escritorio: controles y reparto a la izquierda, bolas a la derecha */
+@media (min-width: 900px) {
+    .juego-admin {
+        display: grid;
+        grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+        grid-template-areas:
+            "patron    bolas"
+            "compartir bolas"
+            "mesa      bolas";
+        grid-template-rows: auto auto 1fr;
+        gap: 1.25rem 2rem;
+        align-content: start;
+    }
+
+    .zona-patron    { grid-area: patron; }
+    .zona-bolas     { grid-area: bolas; align-self: start; }
+    .zona-compartir { grid-area: compartir; }
+    .zona-mesa      { grid-area: mesa; }
+}
+
+.acciones {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.acciones button { flex: 1 1 auto; max-width: 260px; }
+
+.contador {
+    font-family: var(--display);
+    font-size: 0.78rem;
+    color: var(--crema);
+    background: var(--naranja);
+    border: var(--borde-fino);
+    border-radius: var(--r-pastilla);
+    padding: 0.1rem 0.6rem;
+    vertical-align: middle;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Rejilla completa 1-75 */
+.tablero-bolas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(2.1rem, 1fr));
+    gap: 0.35rem;
+    width: 100%;
+    max-width: 640px;
+}
+
+.tablero-bolas .bola { width: 100%; min-width: 0; }
+
+.ganador {
+    font-family: var(--display);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: clamp(1rem, 4vw, 1.4rem);
+    color: var(--verde);
+    text-shadow: 2px 2px 0 var(--naranja-2);
+    margin: 0;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════
+   PUNTOS DE CORTE
+   ═══════════════════════════════════════════════ */
+
+/* Móvil estrecho: todo más compacto, el cartón manda */
+@media (max-width: 599px) {
+    .envoltura { gap: 0.75rem; }
+    .datos { gap: 0.35rem; }
+    .dato { padding: 0.28rem 0.7rem; font-size: 0.8rem; }
+    .tablero { padding: 0.8rem; }
+}
+
+/* Escritorio: cartón a la izquierda, número y bolas a la derecha */
+@media (min-width: 900px) {
+    .juego {
+        display: grid;
+        grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
+        grid-template-areas:
+            "carton numero"
+            "carton ultimas";
+        grid-template-rows: auto 1fr;
+        gap: 1.25rem 2rem;
+        align-content: start;
+        text-align: left;
+    }
+
+    .zona-carton  { grid-area: carton; }
+    .zona-numero  { grid-area: numero; }
+    .zona-ultimas { grid-area: ultimas; }
+
+    /* El grid ya coloca cada zona: el orden de móvil sobra */
+    .zona-numero, .zona-ultimas { order: 0; }
+
+    .carton { width: 100%; }
+
+    .barra-bingo {
+        position: static;
+        background: none;
+        padding: 0;
+    }
+
+    #bingoBtn { width: 100%; }
+
+    .tablero { align-items: flex-start; }
+    .ultimas { justify-content: flex-start; }
+    .estado  { align-self: flex-start; }
+}
+
+/* Móvil en horizontal: cartón a un lado, número y bolas al otro */
+@media (orientation: landscape) and (max-height: 560px) {
+    .envoltura { padding-top: 0.5rem; gap: 0.6rem; }
+
+    .juego {
+        display: grid;
+        grid-template-columns: minmax(0, 46vw) minmax(0, 1fr);
+        grid-template-areas:
+            "carton numero"
+            "carton ultimas";
+        grid-template-rows: auto 1fr;
+        gap: 0.6rem 1rem;
+        align-content: start;
+    }
+
+    .zona-carton  { grid-area: carton; }
+    .zona-numero  { grid-area: numero; order: 0; }
+    .zona-ultimas { grid-area: ultimas; order: 0; }
+
+    .carton { width: 100%; }
+    .bola-grande { font-size: clamp(2rem, 7vh, 3rem); }
+    .barra-bingo { position: static; background: none; padding: 0; }
+    #bingoBtn { width: 100%; min-height: 46px; }
+    h1.display { font-size: 1.4rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PORTADA, COMPARTIR Y PROYECCIÓN
+   ═══════════════════════════════════════════════════════════════ */
+
+.portada { max-width: 720px; }
+
+.separador {
+    border: none;
+    border-top: 2px dashed var(--rule, rgba(25, 63, 86, .25));
+    width: 100%;
+    margin: 0.5rem 0;
+}
+
+.campo-codigo {
+    font-family: var(--display);
+    font-size: clamp(1.3rem, 6vw, 1.8rem);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.codigo-grande {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(2.2rem, 11vw, 3.4rem);
+    letter-spacing: 0.14em;
+    line-height: 1;
+    color: var(--verde);
+    text-shadow: 3px 3px 0 var(--naranja-2);
+    margin: 0;
+}
+
+.enlaces {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.9rem;
+    width: 100%;
+}
+
+.enlace {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    align-items: center;
+    background: var(--crema);
+    border: var(--borde-fino);
+    border-radius: var(--r-panel);
+    padding: 0.9rem;
+}
+
+.url {
+    font-family: var(--mono, ui-monospace, Consolas, monospace);
+    font-size: 0.82rem;
+    color: var(--navy);
+    background: var(--crema-2);
+    border: 1px dashed rgba(25, 63, 86, .35);
+    border-radius: 8px;
+    padding: 0.45rem 0.6rem;
+    width: 100%;
+    word-break: break-all;
+    text-align: center;
+}
+
+.aviso-token {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    align-items: center;
+    width: 100%;
+    background: var(--melocoton);
+    border: var(--borde-fino);
+    border-radius: var(--r-panel);
+    padding: 1rem;
+}
+
+.aviso-token .apunte { color: var(--vino); opacity: 1; }
+.aviso-token .etiqueta { color: var(--vino); opacity: .85; }
+
+button.chico {
+    min-height: 40px;
+    padding: 0.45rem 1rem;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+/* El interruptor de voz va debajo de una lista de bolas: necesita separarse */
+#vozBtn { margin-top: 0.9rem; }
+
+.boton-enlace {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--display);
+    font-weight: 700;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--crema);
+    background: var(--verde);
+    border: var(--borde);
+    border-radius: var(--r-pastilla);
+    box-shadow: var(--sombra);
+    min-height: 48px;
+    padding: 0.7rem 1.6rem;
+}
+
+.boton-enlace:hover { background: var(--verde-osc); }
+
+/* QR */
+
+.qr {
+    background: var(--crema);
+    border: var(--borde-fino);
+    border-radius: 14px;
+    padding: 8px;
+    line-height: 0;
+    width: min(100%, 260px);
+}
+
+.qr.chico { width: min(100%, 170px); }
+.qr svg { width: 100%; height: auto; display: block; }
+
+/* Lista de jugadores */
+
+.lista-jugadores {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.lista-jugadores li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    background: var(--crema);
+    border: var(--borde-fino);
+    border-radius: var(--r-pastilla);
+    padding: 0.35rem 0.5rem 0.35rem 0.9rem;
+}
+
+.lista-jugadores .quien { font-weight: 700; }
+.bola.chica { width: auto; min-width: 2rem; height: 1.8rem; font-size: 0.72rem; }
+
+/* Progreso del patrón */
+
+.progreso {
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--crema);
+    opacity: .9;
+}
+
+.progreso.listo {
+    background: var(--rosa);
+    color: var(--navy);
+    border: var(--borde-fino);
+    border-radius: var(--r-pastilla);
+    padding: 0.25rem 0.9rem;
+    opacity: 1;
+}
+
+.bola-grande.verde {
+    color: var(--verde);
+    text-shadow: 3px 3px 0 var(--naranja-2);
+}
+
+.columna-admin { display: flex; flex-direction: column; gap: var(--hueco); }
+
+/* Confeti */
+
+.confeti {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    pointer-events: none;
+}
+
+/* ═══════════════════════ PROYECCIÓN ═══════════════════════ */
+
+body.proyeccion { padding: 0; }
+
+/* La proyección se ve en una pantalla compartida: cabe entera, sin scroll */
+.pantalla {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.5rem, 1.4vh, 1rem);
+    padding: clamp(0.6rem, 1.6vw, 1.4rem);
+}
+
+.pantalla-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.6rem 1rem;
+}
+
+.pantalla-cabecera h1 { font-size: clamp(1.4rem, 3vw, 2.2rem); }
+
+.pantalla-cuerpo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(0.6rem, 1.6vw, 1.2rem);
+    flex: 1 1 auto;
+    min-height: 0;   /* sin esto, un hijo alto estira la fila y saca scroll */
+}
+
+.pantalla-numero {
+    /* .tablero se alinea a la izquierda desde 900px para la vista de juego;
+       en proyección todo va centrado. */
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    gap: clamp(0.4rem, 1.4vh, 1rem);
+}
+
+.pantalla-numero .ultimas { justify-content: center; }
+
+.bola-enorme {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 700;
+    /* Se mide contra el alto además del ancho, para que quepa siempre */
+    font-size: clamp(3rem, min(20vw, 26vh), 13rem);
+    line-height: .95;
+    color: var(--crema);
+    text-shadow: 5px 5px 0 var(--verde-osc);
+    font-variant-numeric: tabular-nums;
+    min-height: 1em;
+    letter-spacing: 0.01em;
+}
+
+.bola-enorme:empty::after { content: "—"; opacity: .4; }
+
+.pantalla-lado {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: clamp(0.6rem, 1.6vw, 1.2rem);
+    align-content: start;
+}
+
+.patron-nombre { font-size: clamp(1.1rem, 2.4vw, 1.8rem); margin: 0; }
+
+.mini.grande { width: min(60%, 150px); gap: 3px; }
+.mini.grande i { border-radius: 3px; }
+
+.bloque-patron, .bloque-qr { justify-content: center; }
+
+.pantalla-tablero {
+    display: flex;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+
+/* Las 75 bolas ocupan todo el ancho. El número de columnas es un divisor
+   exacto de 75 (15 o 25), así todas las filas quedan llenas y ninguna bola
+   se queda sola en una fila nueva, que es lo que pasaba con auto-fill. */
+.pantalla-tablero .tablero-bolas {
+    max-width: none;
+    width: 100%;
+    grid-template-columns: repeat(15, 1fr);   /* 5 filas de 15 */
+    gap: clamp(2px, .45vw, 6px);
+}
+
+/* El diámetro se limita en vh: la rejilla sigue ocupando todo el ancho, pero
+   las bolas dejan de estirarse hasta llenar su columna y el bloque baja de
+   altura. Van centradas en su celda para que el reparto siga siendo parejo. */
+.pantalla-tablero .bola {
+    min-width: 0;
+    width: 100%;
+    max-width: clamp(22px, 5vh, 46px);
+    height: auto;
+    aspect-ratio: 1;
+    justify-self: center;
+    font-size: clamp(.5rem, 2.1vh, .9rem);
+}
+
+.bola.pendiente { opacity: .35; }
+
+.bola.salida {
+    background: var(--verde);
+    color: var(--crema);
+    border-color: var(--navy);
+}
+
+.pantalla-tablero .bola.reciente {
+    background: var(--naranja);
+    color: var(--crema);
+    transform: scale(1.12);
+}
+
+/* Celebración a pantalla completa */
+
+.winner.celebracion { background: rgba(255, 251, 229, .96); }
+
+.celebracion-caja {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(.4rem, 1.5vh, 1rem);
+    text-align: center;
+    padding: clamp(1rem, 4vw, 2rem);
+}
+
+.ganador-nombre {
+    font-size: clamp(2.4rem, 12vw, 8rem);
+    line-height: .95;
+    margin: 0;
+    text-shadow: 5px 5px 0 var(--naranja-2);
+}
+
+.ganador-sub {
+    margin: 0;
+    font-size: clamp(1rem, 3vw, 1.8rem);
+    font-weight: 700;
+    color: var(--navy);
+}
+
+@media (min-width: 900px) {
+    /* En escritorio la vista se ajusta al alto exacto de la ventana */
+    body.proyeccion { overflow: hidden; }
+    .pantalla { height: 100dvh; min-height: 0; }
+
+    .pantalla-cuerpo { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+
+    /* La columna lateral reparte su alto entre patrón y QR. Flex en lugar de
+       grid: con filas "auto" el contenido desbordaba su celda y los dos
+       paneles se solapaban. Aquí el bloque del QR cede primero. */
+    .pantalla-lado {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .bloque-patron { flex: 0 0 auto; }
+
+    /* Centrado para que el espacio sobrante se reparta arriba y abajo */
+    .bloque-qr {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: hidden;
+        justify-content: center;
+    }
+
+    .bloque-patron, .bloque-qr { padding: clamp(.6rem, 1.6vh, 1.1rem); gap: .35rem; }
+
+    /* En pantallas anchas caben 25 por fila: 3 filas llenas, sin huérfanos */
+    .pantalla-tablero .tablero-bolas { grid-template-columns: repeat(25, 1fr); }
+
+    .mini.grande        { width: min(58%, 14vh); }
+    .patron-nombre      { font-size: clamp(.95rem, 2.8vh, 1.6rem); }
+    .bloque-qr .qr      { width: min(100%, 18vh); padding: 6px; }
+    .bloque-qr .codigo-grande { font-size: clamp(1rem, 3.2vh, 2rem); }
+    .bloque-qr .url     { font-size: clamp(.55rem, 1.3vh, .78rem); padding: .3rem .4rem; }
+    .pantalla-lado .etiqueta { font-size: clamp(.52rem, 1.3vh, .7rem); }
 }

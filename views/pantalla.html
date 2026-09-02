@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Pantalla de juego · Bingo PRO</title>
+    <meta name="description" content="Proyecta el número cantado, el patrón de victoria y el tablero de tu partida de Bingo PRO.">
+    <meta name="application-name" content="Bingo PRO">
+    <meta name="theme-color" content="#008253">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Bingo PRO">
+    <meta name="msapplication-TileColor" content="#008253">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+
+    <link rel="canonical" href="{{PAGE_URL}}">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="icon" href="/branding/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/branding/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/branding/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/branding/apple-touch-icon.png">
+
+    <meta property="og:site_name" content="Bingo PRO">
+    <meta property="og:title" content="Pantalla de juego · Bingo PRO">
+    <meta property="og:description" content="Sigue la partida, los números cantados y el patrón de victoria en tiempo real.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_HN">
+    <meta property="og:url" content="{{PAGE_URL}}">
+    <meta property="og:image" content="{{ORIGIN}}/branding/og-cover.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Bingo PRO: crea una partida, comparte el enlace y juega con tus amigos.">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Pantalla de juego · Bingo PRO">
+    <meta name="twitter:description" content="Sigue la partida, los números cantados y el patrón de victoria en tiempo real.">
+    <meta name="twitter:image" content="{{ORIGIN}}/branding/og-cover.png">
+    <meta name="twitter:image:alt" content="Bingo PRO: bingo multijugador en tiempo real.">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body class="proyeccion">
+
+<div id="avisos" class="avisos" role="status" aria-live="polite"></div>
+
+<section id="sinSala" class="puerta" hidden>
+    <h1 class="display">Partida no encontrada</h1>
+    <p class="apunte">El código <b id="codigoFallido"></b> no corresponde a ninguna partida abierta.</p>
+    <a class="boton-enlace" href="/">Volver al inicio</a>
+</section>
+
+<div id="app" class="pantalla" hidden>
+
+    <!-- Franja superior -->
+    <header class="pantalla-cabecera">
+        <h1 class="display">Bingo Pro</h1>
+
+        <div class="datos">
+            <span class="dato">
+                <span class="punto" id="puntoConexion"></span>
+                <span id="textoConexion">En línea</span>
+            </span>
+            <span class="dato">Sala <b id="codigoSala">—</b></span>
+            <span class="dato">Jugando <b id="players">0</b></span>
+            <span class="dato"><b id="contador">0</b> / 75 bolas</span>
+        </div>
+
+        <button id="vozBtn" class="secundario chico" onclick="alternarVoz(this)">🔇 Voz apagada</button>
+    </header>
+
+    <main class="pantalla-cuerpo">
+
+        <!-- Número cantado, lo más grande de la pantalla -->
+        <section class="tablero pantalla-numero">
+            <p class="etiqueta">Número cantado</p>
+            <p class="bola-enorme" id="current" aria-live="polite"></p>
+            <div class="ultimas" id="ultimas"></div>
+        </section>
+
+        <!-- Patrón y QR -->
+        <aside class="pantalla-lado">
+            <section class="panel bloque-patron">
+                <p class="etiqueta">Patrón de victoria</p>
+                <p class="patron-nombre display" id="status">Cartón lleno</p>
+                <div class="mini grande" id="miniPatron" aria-hidden="true"></div>
+            </section>
+
+            <section class="panel bloque-qr">
+                <p class="etiqueta">Únete con el móvil</p>
+                <div class="qr" id="qr"></div>
+                <p class="codigo-grande" id="codigoQr">—</p>
+                <code class="url" id="urlJugar"></code>
+            </section>
+        </aside>
+
+    </main>
+
+    <!-- Tablero completo 1-75 -->
+    <section class="pantalla-tablero">
+        <div class="tablero-bolas" id="numbers"></div>
+    </section>
+
+</div>
+
+<!-- Celebración a pantalla completa -->
+<div id="winner" class="winner celebracion" hidden>
+    <div class="celebracion-caja">
+        <p class="etiqueta">Tenemos bingo</p>
+        <p class="ganador-nombre display" id="ganadorNombre"></p>
+        <p class="ganador-sub" id="ganadorSub"></p>
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/sala.js"></script>
+<script src="/pantalla.js"></script>
+
+</body>
+</html>

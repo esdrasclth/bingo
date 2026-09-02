@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Panel del anfitrión · Bingo PRO</title>
+    <meta name="description" content="Controla tu partida de Bingo PRO: sortea bolas, elige el patrón y comparte los enlaces.">
+    <meta name="application-name" content="Bingo PRO">
+    <meta name="theme-color" content="#008253">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Bingo PRO">
+    <meta name="msapplication-TileColor" content="#008253">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+
+    <link rel="canonical" href="{{PAGE_URL}}">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="icon" href="/branding/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/branding/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/branding/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/branding/apple-touch-icon.png">
+
+    <meta property="og:site_name" content="Bingo PRO">
+    <meta property="og:title" content="Panel del anfitrión · Bingo PRO">
+    <meta property="og:description" content="Controla la partida, sortea las bolas y comparte el juego con tus amigos.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_HN">
+    <meta property="og:url" content="{{PAGE_URL}}">
+    <meta property="og:image" content="{{ORIGIN}}/branding/og-cover.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Bingo PRO: crea una partida, comparte el enlace y juega con tus amigos.">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Panel del anfitrión · Bingo PRO">
+    <meta name="twitter:description" content="Controla la partida, sortea las bolas y comparte el juego con tus amigos.">
+    <meta name="twitter:image" content="{{ORIGIN}}/branding/og-cover.png">
+    <meta name="twitter:image:alt" content="Bingo PRO: bingo multijugador en tiempo real.">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div id="avisos" class="avisos" role="status" aria-live="polite"></div>
+
+<section id="sinSala" class="puerta" hidden>
+    <h1 class="display">Partida no encontrada</h1>
+    <p class="apunte">El código <b id="codigoFallido"></b> no corresponde a ninguna partida abierta.</p>
+    <a class="boton-enlace" href="/">Volver al inicio</a>
+</section>
+
+<!-- Puerta de acceso -->
+<section id="puerta" class="puerta" hidden>
+    <h1 class="display">Panel</h1>
+    <p class="apunte">Introduce el token de anfitrión que recibiste al crear la partida <b id="codigoPuerta"></b>.</p>
+
+    <form id="authForm" class="auth">
+        <label class="sr-only" for="token">Token de anfitrión</label>
+        <input id="token" name="token" type="password" autocomplete="off"
+               placeholder="Token de anfitrión" required>
+        <button type="submit">Entrar</button>
+    </form>
+</section>
+
+<main id="app" class="envoltura" hidden>
+
+    <header class="cabecera">
+        <h1 class="display">Control</h1>
+
+        <div class="datos">
+            <span class="dato">
+                <span class="punto" id="puntoConexion"></span>
+                <span id="textoConexion">En línea</span>
+            </span>
+            <span class="dato">Sala <b id="codigoSala">—</b></span>
+            <span class="dato">Jugando <b id="players">0</b></span>
+        </div>
+
+        <p class="estado" id="estadoPartida" hidden>Partida terminada · reinicia para jugar otra</p>
+    </header>
+
+    <!-- El orden del DOM es el de móvil: patrón, bolas, compartir, mesa.
+         Desde 900px, grid-template-areas los recoloca en dos columnas. -->
+    <div class="juego-admin">
+
+        <section class="panel zona-patron">
+            <h2 class="display">Patrón de victoria</h2>
+
+            <span class="patron">
+                <span class="mini" id="miniPatron" aria-hidden="true"></span>
+                <span id="currentPattern">Cartón lleno</span>
+            </span>
+
+            <label class="sr-only" for="patternSelect">Patrón de victoria</label>
+            <select id="patternSelect" onchange="setPattern()">
+                <option value="FULL">Cartón lleno</option>
+                <option value="HORIZONTAL">Línea horizontal</option>
+                <option value="VERTICAL">Línea vertical</option>
+                <option value="X">Diagonal X</option>
+                <option value="CROSS">Cruz</option>
+                <option value="CENTER_BOX">Cuadrado central</option>
+            </select>
+
+            <div class="acciones">
+                <button id="drawBtn" class="naranja" onclick="draw()">🎲 Sacar bola</button>
+                <button id="resetBtn" class="secundario" onclick="reset()">🔄 Reiniciar</button>
+            </div>
+
+            <p class="ganador" id="winner"></p>
+        </section>
+
+        <section class="panel zona-bolas">
+            <h2 class="display">Bolas cantadas <span class="contador" id="contador">0</span></h2>
+            <p class="etiqueta">Última cantada</p>
+            <p class="bola-grande verde" id="current"></p>
+            <div id="numbers" class="tablero-bolas"></div>
+            <button id="vozBtn" class="secundario chico" onclick="alternarVoz(this)">🔇 Voz apagada</button>
+        </section>
+
+        <section class="panel zona-compartir">
+            <h2 class="display">Compartir</h2>
+
+            <p class="etiqueta">Código</p>
+            <p class="codigo-grande" id="codigoGrande">—</p>
+
+            <div class="enlaces">
+                <div class="enlace">
+                    <p class="etiqueta">Para jugadores</p>
+                    <code class="url" id="urlJugar"></code>
+                    <button class="secundario chico" onclick="copiar('urlJugar', this)">Copiar</button>
+                </div>
+                <div class="enlace">
+                    <p class="etiqueta">Para proyectar</p>
+                    <code class="url" id="urlPantalla"></code>
+                    <button class="secundario chico" onclick="copiar('urlPantalla', this)">Copiar</button>
+                </div>
+            </div>
+
+            <div class="qr chico" id="qr"></div>
+            <p class="apunte">Los jugadores también pueden escanear este código.</p>
+        </section>
+
+        <section class="panel zona-mesa">
+            <h2 class="display">En la mesa <span class="contador" id="contadorJugadores">0</span></h2>
+            <ul class="lista-jugadores" id="listaJugadores"></ul>
+        </section>
+
+    </div>
+</main>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/sala.js"></script>
+<script src="/admin.js"></script>
+
+</body>
+</html>
