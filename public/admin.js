@@ -56,7 +56,14 @@ function autenticar(token, silencioso, alTerminar) {
             const input = $("token");
             input.value = "";
             input.focus();
-            if (!silencioso) aviso("Token incorrecto", "error");
+            tokenAdmin = null;
+            try { sessionStorage.removeItem(claveToken); } catch (e) { /* modo privado */ }
+            aviso(
+                silencioso
+                    ? "El token guardado no es válido para esta sala. Inténtalo de nuevo."
+                    : "Token incorrecto",
+                "error"
+            );
             abrirPuerta();
             return;
         }

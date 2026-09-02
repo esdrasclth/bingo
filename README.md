@@ -4,6 +4,8 @@
 
 ### Bingo multijugador en tiempo real, simple de compartir y listo para jugar
 
+### [🎉 Jugar ahora en bingo.brandsofts.com](https://bingo.brandsofts.com/)
+
 Crea una partida, comparte el enlace y permite que cada participante juegue desde su teléfono mientras el anfitrión controla el sorteo y una pantalla común muestra el progreso.
 
 ![Portada de Bingo PRO](public/branding/og-cover.png)
@@ -16,6 +18,7 @@ Crea una partida, comparte el enlace y permite que cada participante juegue desd
 - Cartones únicos de 5 × 5 para cada participante.
 - Actualizaciones en tiempo real mediante WebSockets.
 - Panel protegido para el anfitrión.
+- Regreso sencillo al panel usando el código de sala y el token de anfitrión.
 - Vista de proyección con tablero, número actual y código QR.
 - Persistencia opcional de partidas y jugadores mediante Neon Postgres.
 - Recuperación del cartón y las marcas después de recargar la página.
@@ -77,11 +80,17 @@ No agregues archivos `.env`, `.env.local` o credenciales al repositorio.
 
 ## Uso
 
-1. Abre la página principal y selecciona **Crear partida**.
+1. Abre [bingo.brandsofts.com](https://bingo.brandsofts.com/) y selecciona **Crear partida**.
 2. Guarda el token de anfitrión mostrado por la aplicación.
 3. Comparte el enlace para jugadores o el código de la sala.
 4. Abre el enlace de proyección en una pantalla compartida, si lo necesitas.
 5. Desde el panel del anfitrión, selecciona el patrón y comienza a sacar bolas.
+
+### Volver al panel del anfitrión
+
+Si cerraste el panel por accidente, vuelve a la página principal y busca **¿Cerraste el panel?**. Ingresa el código de cinco caracteres de la sala y el token de anfitrión, y luego selecciona **Volver a mi panel**.
+
+También puedes abrir directamente `/admin/CÓDIGO` e introducir allí el token. El token nunca se agrega a la URL y se conserva únicamente en el almacenamiento temporal de la pestaña. Una sala que ya expiró o fue eliminada no puede reabrirse con el token.
 
 ## Rutas principales
 
