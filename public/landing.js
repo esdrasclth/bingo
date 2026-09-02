@@ -2,6 +2,22 @@
 
 const $ = id => document.getElementById(id);
 
+/* ── Cómo jugar ── */
+
+function abrirAyuda() { $("ayuda").showModal(); }
+function cerrarAyuda() { $("ayuda").close(); }
+
+// Clic fuera de la caja: <dialog> no lo cierra solo, y el backdrop cuenta como
+// clic sobre el propio diálogo, así que se compara con su rectángulo.
+$("ayuda").addEventListener("click", (e) => {
+    const caja = e.currentTarget.getBoundingClientRect();
+
+    const dentro = e.clientX >= caja.left && e.clientX <= caja.right &&
+                   e.clientY >= caja.top  && e.clientY <= caja.bottom;
+
+    if (!dentro) cerrarAyuda();
+});
+
 async function crearPartida() {
     const boton = $("crearBtn");
     boton.disabled = true;
