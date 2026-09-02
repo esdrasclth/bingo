@@ -1167,3 +1167,273 @@ body.proyeccion { padding: 0; }
     .bloque-qr .url     { font-size: clamp(.55rem, 1.3vh, .78rem); padding: .3rem .4rem; }
     .pantalla-lado .etiqueta { font-size: clamp(.52rem, 1.3vh, .7rem); }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   MESA DEL JUGADOR — ENCAJE EN LA VENTANA
+   ═══════════════════════════════════════════════════════════════
+
+   Mismo principio que la proyección: la vista cabe entera y no aparece la
+   barra de desplazamiento. Lo que puede encoger se mide también contra el
+   alto (vh), y el cartón —lo único que el jugador toca— se queda con todo el
+   espacio que sobra.
+
+   El encaje solo se activa con la mesa en pantalla. Las puertas (pedir el
+   nombre, sala inexistente) se quedan con el body de siempre, que sí puede
+   desplazarse: son formularios y con el teclado abierto necesitan el scroll.
+   ═══════════════════════════════════════════════════════════════ */
+
+body.jugador:has(#app:not([hidden])) {
+    height: 100dvh;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.jugador .envoltura {
+    --hueco-j: clamp(0.35rem, 1.3vh, 0.9rem);
+    --pad-x-j: clamp(0.5rem, 2.5vw, 1.5rem);
+
+    height: 100%;
+    min-height: 0;
+    gap: var(--hueco-j);
+    padding: clamp(0.4rem, 1.2vh, 0.9rem)
+             var(--pad-x-j)
+             calc(clamp(0.4rem, 1.2vh, 0.9rem) + env(safe-area-inset-bottom));
+}
+
+/* La cabecera ocupa lo suyo y ni un píxel más */
+.jugador .cabecera { flex: 0 0 auto; gap: 0.35rem; }
+.jugador .cabecera h1.display { font-size: clamp(1rem, 3.4vh, 2.1rem); }
+.jugador .datos { gap: 0.3rem; }
+
+.jugador .dato {
+    padding: 0.18rem 0.6rem;
+    font-size: clamp(0.62rem, 1.6vh, 0.85rem);
+}
+
+.jugador .punto { width: clamp(6px, 1.1vh, 9px); height: clamp(6px, 1.1vh, 9px); }
+.jugador .estado { padding: 0.2rem 0.7rem; font-size: clamp(0.68rem, 1.7vh, 0.9rem); }
+
+/* El resto de la ventana es de la zona de juego */
+.jugador .juego {
+    flex: 1 1 auto;
+    min-height: 0;
+    gap: var(--hueco-j);
+}
+
+/* ── Número cantado: compacto, cede alto al cartón ── */
+
+/* El patrón y el "te faltan N casillas" comparten línea: son dos frases
+   cortas y ocupando una fila cada una se comían el alto del cartón. La
+   etiqueta y el número siguen mandando en su propia línea. */
+.jugador .zona-numero {
+    flex: 0 0 auto;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    padding: clamp(0.45rem, 1.5vh, 1.2rem) clamp(0.7rem, 2.5vw, 1.4rem);
+    gap: clamp(0.2rem, 0.8vh, 0.5rem) 0.6rem;
+}
+
+.jugador .zona-numero > .etiqueta,
+.jugador .zona-numero > .bola-grande { flex: 1 0 100%; }
+
+.jugador .zona-numero .etiqueta { font-size: clamp(0.55rem, 1.5vh, 0.72rem); }
+
+.jugador .bola-grande {
+    font-size: clamp(1.6rem, min(12vw, 7.5vh), 4.6rem);
+    text-shadow: 2px 2px 0 var(--verde-osc);
+}
+
+.jugador .patron {
+    padding: 0.18rem 0.7rem;
+    gap: 0.35rem;
+    font-size: clamp(0.65rem, 1.7vh, 0.9rem);
+}
+
+.jugador .patron .mini { width: clamp(18px, 3.2vh, 34px); }
+.jugador .progreso { font-size: clamp(0.68rem, 1.8vh, 0.95rem); }
+.jugador .progreso.listo { padding: 0.15rem 0.7rem; }
+
+/* ── Cartón: se queda con el hueco libre ──
+
+   El cartón se dimensiona por su ALTO, no por su ancho: recibe el alto que
+   sobra y la proporción le calcula el ancho. Las cabeceras B-I-N-G-O son
+   proporcionales al cartón (aspect-ratio en vez de padding), así el reparto
+   sale siempre igual y las casillas quedan cuadradas:
+
+     alto = cabecera (0.11·ancho) + hueco (~0.015·ancho) + rejilla (ancho)
+          ≈ 1.125 · ancho   →   aspect-ratio 8 / 9                          */
+
+.jugador .zona-carton {
+    flex: 1 1 auto;
+    min-height: 0;
+    align-items: center;
+    /* Cuando el cartón toca su ancho máximo y sobra alto, el hueco se reparte
+       arriba y abajo en vez de amontonarse bajo el botón. */
+    justify-content: center;
+    gap: clamp(0.3rem, 1vh, 0.75rem);
+}
+
+.jugador .carton {
+    container-type: inline-size;
+    container-name: carton;
+
+    height: 100%;
+    width: auto;
+    aspect-ratio: 8 / 9;
+    margin-inline: auto;
+    gap: clamp(3px, 1.5cqw, 8px);
+
+    /* Dos topes, uno por dimensión, porque el cartón crece por el alto y hay
+       que frenarlo antes de que se pase de ancho. Si solo estuviera max-width,
+       en una pantalla alta y estrecha el alto seguiría estirándose contra un
+       ancho ya tope y las casillas saldrían rectangulares.
+
+       max-height se calcula desde el ancho disponible (viewport menos los
+       márgenes de la envoltura) porque un porcentaje aquí se mediría contra el
+       alto del padre, que es justo lo que queremos limitar. */
+    --ancho-max-j: min(100vw - var(--pad-x-j) * 2, 460px);
+    max-width: min(100%, 460px);
+    max-height: calc(var(--ancho-max-j) * 9 / 8);
+}
+
+/* minmax(0, 1fr) y no 1fr: el mínimo "auto" de una columna de rejilla es el
+   tamaño mínimo de su contenido, y con aspect-ratio en las casillas eso hacía
+   que las cinco columnas se negaran a bajar del ancho del cartón. */
+.jugador .carton-cab,
+.jugador .carton-rejilla {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: clamp(3px, 1.5cqw, 8px);
+}
+
+.jugador .carton-cab { flex: 0 0 auto; }
+
+.jugador .carton-cab span {
+    aspect-ratio: 1 / 0.55;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    line-height: 1;
+    font-size: clamp(0.7rem, 7.5cqw, 1.7rem);
+    box-shadow: 0 2px 0 var(--navy);
+}
+
+/* La rejilla se estira hasta el borde inferior del cartón y reparte su alto
+   en cinco filas iguales. Las casillas dejan de imponer su propio cuadrado:
+   ya lo son, porque el cartón entero tiene la proporción correcta. */
+.jugador .carton-rejilla {
+    flex: 1 1 auto;
+    min-height: 0;
+    grid-template-rows: repeat(5, minmax(0, 1fr));
+}
+
+.jugador .casilla {
+    aspect-ratio: auto;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    font-size: clamp(0.7rem, 7cqw, 1.6rem);
+}
+
+.jugador .casilla.libre { font-size: clamp(0.45rem, 4.2cqw, 0.9rem); }
+
+/* Sin scroll no hay nada que fijar: la barra vuelve al flujo */
+.jugador .barra-bingo {
+    position: static;
+    flex: 0 0 auto;
+    background: none;
+    padding: 0;
+}
+
+.jugador #bingoBtn {
+    min-height: clamp(34px, 6.2vh, 58px);
+    padding: clamp(0.25rem, 1vh, 0.7rem) 1.6rem;
+    font-size: clamp(0.85rem, 2.6vh, 1.4rem);
+}
+
+/* ── Últimas bolas: una sola fila, nunca dos ── */
+
+.jugador .zona-ultimas {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(0.2rem, 0.8vh, 0.5rem);
+}
+
+.jugador .zona-ultimas .etiqueta { font-size: clamp(0.55rem, 1.5vh, 0.72rem); }
+
+.jugador .zona-ultimas .ultimas {
+    flex-wrap: nowrap;
+    gap: clamp(0.2rem, 0.8vw, 0.4rem);
+    max-width: 100%;
+}
+
+.jugador .zona-ultimas .bola {
+    min-width: clamp(1.4rem, 3.8vh, 2.1rem);
+    height: clamp(1.4rem, 3.8vh, 2.1rem);
+    padding: 0 0.2rem;
+    font-size: clamp(0.58rem, 1.7vh, 0.82rem);
+}
+
+.jugador #vozBtn {
+    min-height: 0;
+    padding: 0.25rem 0.7rem;
+    font-size: clamp(0.65rem, 1.7vh, 0.85rem);
+}
+
+/* ── Escritorio: cartón a la izquierda, con el alto de la ventana ──
+
+   La columna del cartón se mide en vh porque es el alto quien manda: así la
+   rejilla nunca pide más sitio del que hay y la columna no deja hueco muerto. */
+@media (min-width: 900px) {
+    .jugador .juego {
+        grid-template-columns: minmax(0, min(460px, 62vh)) minmax(0, 1fr);
+        gap: var(--hueco-j) clamp(1rem, 3vw, 2rem);
+        align-content: stretch;
+    }
+
+    /* Aquí el ancho de la columna ya lleva el alto de la ventana dentro, así
+       que el cartón se mide por el ancho y la proporción le da el alto. Si en
+       vez de eso siguiera estirándose hasta el fondo de la fila, las casillas
+       dejarían de ser cuadradas en cuanto sobrara alto. */
+    .jugador .zona-carton { align-items: stretch; }
+
+    .jugador .carton {
+        width: 100%;
+        height: auto;
+        max-width: 100%;
+        max-height: none;
+        flex: 0 0 auto;
+    }
+
+    .jugador .zona-numero { align-self: start; }
+    .jugador .zona-ultimas { align-items: flex-start; align-self: start; }
+    .jugador .zona-ultimas .ultimas { justify-content: flex-start; }
+}
+
+/* ── Móvil en horizontal: el cartón manda, el resto se aprieta ── */
+@media (orientation: landscape) and (max-height: 560px) {
+    .jugador .juego {
+        grid-template-columns: minmax(0, min(46vw, 64vh)) minmax(0, 1fr);
+        gap: 0.5rem 1rem;
+        align-content: stretch;
+    }
+
+    .jugador .zona-carton { align-items: stretch; }
+
+    .jugador .carton {
+        width: 100%;
+        height: auto;
+        max-width: 100%;
+        max-height: none;
+        flex: 0 0 auto;
+    }
+
+    .jugador .zona-numero { align-self: start; }
+    .jugador .zona-ultimas { align-items: flex-start; align-self: start; }
+    .jugador .zona-ultimas .ultimas { justify-content: flex-start; }
+    .jugador .cabecera h1.display { font-size: clamp(0.95rem, 4vh, 1.4rem); }
+}
