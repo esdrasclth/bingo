@@ -26,6 +26,8 @@ const VIDA_SIN_ACTIVIDAD  = 6 * 60 * 60 * 1000;   // 6 h
 const BARRIDO_CADA        = 15 * 60 * 1000;       // 15 min
 const CREACIONES_POR_IP   = 20;
 const VENTANA_CREACION    = 10 * 60 * 1000;
+const RECUPERACIONES_POR_IP = 15;
+const VENTANA_RECUPERACION  = 10 * 60 * 1000;
 
 /* ═══════════════════════ JUGADOR ═══════════════════════
    Vive por su id persistente, no por el socket: así recargar la página
@@ -140,6 +142,7 @@ class Partida {
 
 const partidas = new Map();
 const creacionesPorIp = new Map();
+const recuperacionesPorIp = new Map();
 const arranque = Date.now();
 
 // Fisher-Yates: sort(() => Math.random() - 0.5) no da una permutación uniforme
@@ -353,6 +356,44 @@ app.get("/api/partidas/:codigo", (req, res) => {
         patron: partida.currentPattern,
         terminada: partida.gameLocked
     });
+});
+
+// 👑 Recuperar el panel con el token como única credencial. La búsqueda se
+// hace contra los hashes: el token en claro nunca se guarda en el servidor.
+app.post("/api/admin/recuperar", (req, res) => {
+    const ip = req.ip || req.socket.remoteAddress || "desconocida";
+    const ahora = Date.now();
+    const previos = (recuperacionesPorIp.get(ip) || [])
+        .filter(t => ahora - t < VENTANA_RECUPERACION);
+
+    if (previos.length >= RECUPERACIONES_POR_IP) {
+        return res.status(429).json({
+            error: "Has realizado muchos intentos. Espera unos minutos."
+        });
+    }
+
+    previos.push(ahora);
+    recuperacionesPorIp.set(ip, previos);
+
+    const token = typeof req.body?.token === "string" ? req.body.token.trim() : "";
+    let encontrada = null;
+
+    if (token && token.length <= 128) {
+        // Se recorren todas las salas incluso después de encontrar una, para
+        // no filtrar su posición mediante el tiempo de respuesta.
+        for (const partida of partidas.values()) {
+            if (tokenValido(token, partida.tokenHash)) encontrada = partida;
+        }
+    }
+
+    if (!encontrada) {
+        return res.status(401).json({
+            error: "El token no corresponde a ninguna partida activa."
+        });
+    }
+
+    encontrada.tocar();
+    res.json({ codigo: encontrada.codigo });
 });
 
 // 📱 QR del enlace para unirse, generado aquí para no depender de ningún CDN
@@ -614,6 +655,12 @@ setInterval(() => {
         const vivas = marcas.filter(t => ahora - t < VENTANA_CREACION);
         if (vivas.length) creacionesPorIp.set(ip, vivas);
         else creacionesPorIp.delete(ip);
+    }
+
+    for (const [ip, marcas] of recuperacionesPorIp) {
+        const vivas = marcas.filter(t => ahora - t < VENTANA_RECUPERACION);
+        if (vivas.length) recuperacionesPorIp.set(ip, vivas);
+        else recuperacionesPorIp.delete(ip);
     }
 }, BARRIDO_CADA).unref();
 

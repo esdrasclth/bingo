@@ -74,14 +74,9 @@
 
         <div class="recuperar-admin">
             <h2 class="display">¿Cerraste el panel?</h2>
-            <p class="apunte">Vuelve como anfitrión con el código de la sala y el token que guardaste.</p>
+            <p class="apunte">Pega el token que guardaste y te llevaremos a la sala correcta.</p>
 
             <form id="recuperarAdminForm" class="auth">
-                <label class="sr-only" for="codigoAdmin">Código de la partida</label>
-                <input id="codigoAdmin" name="codigoAdmin" type="text" inputmode="latin"
-                       autocomplete="off" autocapitalize="characters" spellcheck="false"
-                       maxlength="5" placeholder="CÓDIGO" class="campo-codigo" required>
-
                 <label class="sr-only" for="tokenAdminGuardado">Token de anfitrión</label>
                 <input id="tokenAdminGuardado" name="tokenAdmin" type="password"
                        autocomplete="off" autocapitalize="none" spellcheck="false"
@@ -90,7 +85,7 @@
                 <button type="submit" class="secundario">👑 Volver a mi panel</button>
             </form>
 
-            <p class="ayuda-token">El token se usa de forma segura: nunca se agrega a la dirección del navegador.</p>
+            <p class="ayuda-token">No necesitas recordar el código. El token nunca se agrega a la dirección del navegador.</p>
         </div>
     </section>
 

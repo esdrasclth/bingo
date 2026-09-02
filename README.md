@@ -88,9 +88,9 @@ No agregues archivos `.env`, `.env.local` o credenciales al repositorio.
 
 ### Volver al panel del anfitrión
 
-Si cerraste el panel por accidente, vuelve a la página principal y busca **¿Cerraste el panel?**. Ingresa el código de cinco caracteres de la sala y el token de anfitrión, y luego selecciona **Volver a mi panel**.
+Si cerraste el panel por accidente, vuelve a la página principal y busca **¿Cerraste el panel?**. Pega el token de anfitrión y selecciona **Volver a mi panel**; la aplicación encontrará la sala activa correspondiente sin pedirte el código.
 
-También puedes abrir directamente `/admin/CÓDIGO` e introducir allí el token. El token nunca se agrega a la URL y se conserva únicamente en el almacenamiento temporal de la pestaña. Una sala que ya expiró o fue eliminada no puede reabrirse con el token.
+También puedes abrir directamente `/admin/CÓDIGO` e introducir allí el token. El token nunca se agrega a la URL y se conserva únicamente en el almacenamiento temporal de la pestaña. La recuperación tiene límite de intentos y una sala que ya expiró o fue eliminada no puede reabrirse con el token.
 
 ## Rutas principales
 

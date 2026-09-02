@@ -80,28 +80,29 @@ $("unirseForm").addEventListener("submit", async (e) => {
 $("recuperarAdminForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const campoCodigo = $("codigoAdmin");
     const campoToken = $("tokenAdminGuardado");
-    const codigo = campoCodigo.value.trim().toUpperCase();
     const token = campoToken.value.trim();
     const boton = e.target.querySelector("button");
 
-    if (!codigo || !token) return;
+    if (!token) return;
 
     boton.disabled = true;
 
     try {
-        const res = await fetch("/api/partidas/" + encodeURIComponent(codigo));
+        const res = await fetch("/api/admin/recuperar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token })
+        });
+        const datos = await res.json();
 
         if (!res.ok) {
-            aviso("No existe ninguna partida activa con ese código", "error");
-            campoCodigo.focus();
-            campoCodigo.select();
+            aviso(datos.error || "No fue posible recuperar la partida", "error");
+            campoToken.focus();
+            campoToken.select();
             boton.disabled = false;
             return;
         }
-
-        const datos = await res.json();
 
         // El panel validará el token con el servidor. Se mantiene en esta
         // pestaña y nunca se expone en la URL, el historial o los enlaces.
@@ -120,10 +121,8 @@ $("recuperarAdminForm").addEventListener("submit", async (e) => {
 });
 
 // Mayúsculas mientras se escribe, para que coincida con el código impreso
-["codigo", "codigoAdmin"].forEach((id) => {
-    $(id).addEventListener("input", (e) => {
-        e.target.value = e.target.value.toUpperCase();
-    });
+$("codigo").addEventListener("input", (e) => {
+    e.target.value = e.target.value.toUpperCase();
 });
 
 async function copiar(id, boton) {
