@@ -2,8 +2,6 @@
 
 const $ = id => document.getElementById(id);
 
-/* ── Cómo jugar ── */
-
 function abrirAyuda() { $("ayuda").showModal(); }
 function cerrarAyuda() { $("ayuda").close(); }
 

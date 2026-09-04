@@ -63,3 +63,19 @@ with Image.open(SOURCE / "cover.png") as source_cover:
     cover = source_cover.convert("RGB")
     cover.save(OUTPUT / "cover.png", optimize=True)
     resized(cover, (1200, 630)).save(OUTPUT / "og-cover.png", optimize=True)
+
+# La ilustración de la portada: un recorte sin fondo que se apoya directamente
+# sobre la crema de la página. Se sale en WebP porque el PNG pesa 1,7 MB y
+# cuantizarlo a paleta deja bandas en el degradado del resplandor.
+with Image.open(SOURCE / "ilustracion.png") as source_art:
+    art = source_art.convert("RGBA")
+
+    # El original trae un margen transparente ancho; recortarlo evita que la
+    # maquetación tenga que compensar un hueco que no se ve.
+    art = art.crop(art.getchannel("A").point(lambda v: 255 if v > 8 else 0).getbbox())
+
+    width = 1280
+    height = round(art.height * width / art.width)
+    resized(art, (width, height)).save(
+        OUTPUT / "ilustracion.webp", format="WEBP", quality=86, method=6
+    )

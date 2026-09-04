@@ -40,119 +40,45 @@
     <meta name="twitter:image:alt" content="Bingo PRO: bingo multijugador en tiempo real.">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="portada-app">
+<body>
 
 <div id="avisos" class="avisos" role="status" aria-live="polite"></div>
 
-<!-- ── Barra superior ── -->
-<header class="barra">
-    <a class="marca" href="/">
-        <img class="marca-icono" src="/branding/logo.png" alt="" width="48" height="48">
-        <span class="marca-texto"><b>Bingo</b> <i>Pro</i></span>
-    </a>
+<div class="envoltura portada">
 
-    <button type="button" class="ayuda-abrir" onclick="abrirAyuda()">
-        ¿Cómo jugar?
-        <span class="ayuda-signo" aria-hidden="true">?</span>
-    </button>
-</header>
+    <header class="cabecera">
+        <h1 class="display">Bingo Pro</h1>
+        <p class="apunte">Crea una partida, comparte el enlace y a jugar.</p>
 
-<!-- ── Presentación, a ancho completo para que la loma llegue a los bordes ── -->
-<section class="hero-banda">
-    <div class="hero">
-        <svg class="hero-loma" viewBox="0 0 1200 260" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M0 260 L0 214 C 210 209, 430 203, 630 172 C 840 139, 1020 96, 1200 22 L1200 260 Z"/>
-        </svg>
+        <button type="button" class="ayuda-abrir" onclick="abrirAyuda()">
+            ¿Cómo jugar?
+            <span class="ayuda-signo" aria-hidden="true">?</span>
+        </button>
+    </header>
 
-        <div class="hero-texto">
-            <h1 class="hero-titulo">
-                <span class="hero-bingo">Bingo</span>
-                <span class="hero-pro">Pro</span>
-            </h1>
+    <!-- Paso 1: crear o unirse -->
+    <section id="inicio" class="panel">
+        <h2 class="display">Nueva partida</h2>
+        <p class="apunte">Serás el anfitrión: tú cantas las bolas y eliges el patrón.</p>
 
-            <p class="hero-lema">Crea una partida, comparte el enlace y a jugar.</p>
+        <button id="crearBtn" class="naranja" onclick="crearPartida()">🎉 Crear partida</button>
 
-            <p class="hero-cuerpo">
-                Bingo Pro te permite crear partidas en tiempo real, compartir el enlace con tus
-                amigos y disfrutar juntos desde cualquier teléfono. Tú cantas las bolas, eliges
-                el patrón y vives la emoción de cada bingo.
-            </p>
+        <hr class="separador">
 
-            <ul class="ventajas">
-                <li class="ventaja">
-                    <span class="ventaja-icono verde" aria-hidden="true">
-                        <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><circle cx="16.6" cy="9" r="2.6"/><path d="M3.4 18.6c.5-3 2.8-4.6 5.6-4.6s5.1 1.6 5.6 4.6"/><path d="M16 14.1c2.4.1 4.2 1.6 4.6 4"/></svg>
-                    </span>
-                    <span>Multijugador<br>en tiempo real</span>
-                </li>
+        <h2 class="display">¿Te han invitado?</h2>
 
-                <li class="ventaja">
-                    <span class="ventaja-icono rosa" aria-hidden="true">
-                        <svg viewBox="0 0 24 24"><path d="M10.2 13.8a4.2 4.2 0 0 0 6 0l3-3a4.2 4.2 0 0 0-6-6l-1.3 1.3"/><path d="M13.8 10.2a4.2 4.2 0 0 0-6 0l-3 3a4.2 4.2 0 0 0 6 6l1.3-1.3"/></svg>
-                    </span>
-                    <span>Comparte<br>el enlace</span>
-                </li>
+        <form id="unirseForm" class="auth">
+            <label class="sr-only" for="codigo">Código de la partida</label>
+            <input id="codigo" name="codigo" type="text" inputmode="latin"
+                   autocomplete="off" autocapitalize="characters" spellcheck="false"
+                   maxlength="5" placeholder="CÓDIGO" class="campo-codigo" required>
+            <button type="submit" class="secundario">Unirme</button>
+        </form>
 
-                <li class="ventaja">
-                    <span class="ventaja-icono ambar" aria-hidden="true">
-                        <svg viewBox="0 0 24 24"><path d="M12 3.6l2.5 5.1 5.6.8-4 3.9 1 5.6-5.1-2.7-5.1 2.7 1-5.6-4-3.9 5.6-.8z"/></svg>
-                    </span>
-                    <span>Patrones<br>divertidos</span>
-                </li>
-            </ul>
-        </div>
+        <hr class="separador">
 
-        <div class="hero-arte">
-            <img src="/branding/hero.png" width="1536" height="1024"
-                 alt="Dos jugadores celebrando un bingo junto a un cartón y la bola 23"
-                 onerror="this.closest('.hero-arte').hidden = true">
-        </div>
-    </div>
-</section>
-
-<main class="portada">
-
-    <!-- ── Paso 1: crear, unirse o recuperar el panel ── -->
-    <section id="inicio" class="tarjetas">
-
-        <article class="tarjeta tarjeta-verde">
-            <header class="tarjeta-cab">
-                <span class="tarjeta-icono verde" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13"/></svg>
-                </span>
-                <h2 class="tarjeta-titulo">Nueva partida</h2>
-            </header>
-
-            <p class="apunte">Serás el anfitrión: tú cantas las bolas y eliges el patrón.</p>
-
-            <button id="crearBtn" class="naranja" onclick="crearPartida()">🎉 Crear partida</button>
-        </article>
-
-        <article class="tarjeta tarjeta-rosa">
-            <header class="tarjeta-cab">
-                <span class="tarjeta-icono rosa" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><circle cx="16.6" cy="9" r="2.6"/><path d="M3.4 18.6c.5-3 2.8-4.6 5.6-4.6s5.1 1.6 5.6 4.6"/><path d="M16 14.1c2.4.1 4.2 1.6 4.6 4"/></svg>
-                </span>
-                <h2 class="tarjeta-titulo">¿Te han invitado?</h2>
-            </header>
-
-            <form id="unirseForm" class="auth">
-                <label class="sr-only" for="codigo">Código de la partida</label>
-                <input id="codigo" name="codigo" type="text" inputmode="latin"
-                       autocomplete="off" autocapitalize="characters" spellcheck="false"
-                       maxlength="5" placeholder="CÓDIGO" class="campo-codigo" required>
-                <button type="submit" class="rosa">Unirme <span aria-hidden="true">›</span></button>
-            </form>
-        </article>
-
-        <article class="tarjeta tarjeta-ambar">
-            <header class="tarjeta-cab">
-                <span class="tarjeta-icono ambar" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M4 17.4l-1.2-9 4.7 3.2L12 5l4.5 6.6 4.7-3.2-1.2 9z"/><path d="M4 17.4h16"/></svg>
-                </span>
-                <h2 class="tarjeta-titulo">¿Cerraste el panel?</h2>
-            </header>
-
+        <div class="recuperar-admin">
+            <h2 class="display">¿Cerraste el panel?</h2>
             <p class="apunte">Pega el token que guardaste y te llevaremos a la sala correcta.</p>
 
             <form id="recuperarAdminForm" class="auth">
@@ -161,20 +87,17 @@
                        autocomplete="off" autocapitalize="none" spellcheck="false"
                        placeholder="Token de anfitrión" required>
 
-                <button type="submit" class="naranja">👑 Volver a mi panel</button>
+                <button type="submit" class="secundario">👑 Volver a mi panel</button>
             </form>
 
-            <p class="ayuda-token">
-                <span class="escudo" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M12 3.2l7 2.6v5.4c0 4.2-2.9 7.6-7 9.6-4.1-2-7-5.4-7-9.6V5.8z"/></svg>
-                </span>
-                No necesitas recordar el código. El token nunca se agrega a la dirección del navegador.
-            </p>
-        </article>
+            <p class="ayuda-token">No necesitas recordar el código. El token nunca se agrega a la dirección del navegador.</p>
+        </div>
 
+        <img class="ilustracion" src="/branding/ilustracion.webp" width="1280" height="841"
+             alt="Dos jugadores celebrando un bingo junto a un cartón y la bola 23">
     </section>
 
-    <!-- ── Paso 2: partida creada ── -->
+    <!-- Paso 2: partida creada -->
     <section id="creada" class="panel" hidden>
         <h2 class="display">¡Partida lista!</h2>
 
@@ -207,27 +130,9 @@
         <button class="naranja" id="irPanel">👑 Abrir mi panel</button>
     </section>
 
-</main>
+</div>
 
-<!-- ── Pie ── -->
-<footer class="pie">
-    <p class="pie-lado">
-        <span class="pie-icono" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><circle cx="16.6" cy="9" r="2.6"/><path d="M3.4 18.6c.5-3 2.8-4.6 5.6-4.6s5.1 1.6 5.6 4.6"/><path d="M16 14.1c2.4.1 4.2 1.6 4.6 4"/></svg>
-        </span>
-        Hecho para jugar juntos, estés donde estés. <span class="pie-corazon" aria-hidden="true">♥</span>
-    </p>
-
-    <p class="pie-confeti" aria-hidden="true">
-        <i class="c-verde"></i><i class="c-rosa"></i><i class="c-naranja"></i>
-        <b>★</b>
-        <i class="c-rosa"></i><i class="c-verde"></i>
-    </p>
-
-    <p class="pie-lado">Diviértete. Comparte. Grita <b>Bingo</b>.</p>
-</footer>
-
-<!-- ── Cómo jugar ── -->
+<!-- ¿Cómo jugar? -->
 <dialog id="ayuda" class="ayuda">
     <header class="ayuda-cab">
         <h2 class="display">¿Cómo jugar?</h2>

@@ -781,12 +781,179 @@ select:focus-visible {
    PORTADA, COMPARTIR Y PROYECCIÓN
    ═══════════════════════════════════════════════════════════════ */
 
+.portada { max-width: 720px; }
+
+/* ── Ilustración de la portada ──
+   Va al final del panel de inicio, debajo de la recuperación. El recorte no
+   lleva fondo, así que se apoya directamente sobre la crema del panel. */
+
+.ilustracion {
+    display: block;
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    margin: 0.25rem auto 0;
+}
+
+/* ── Acceso a "¿Cómo jugar?" ── */
+
+.ayuda-abrir {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    min-height: 40px;
+    padding: 0.45rem 1.1rem;
+    font-size: clamp(0.78rem, 2.4vw, 0.88rem);
+
+    color: var(--navy);
+    background: var(--crema-2);
+    box-shadow: 0 3px 0 var(--navy);
+}
+
+.ayuda-abrir:hover:not(:disabled) { background: var(--melocoton); }
+
+.ayuda-abrir:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 0 0 var(--navy);
+}
+
+.ayuda-signo {
+    display: grid;
+    place-items: center;
+    width: 1.2rem;
+    height: 1.2rem;
+
+    font-family: var(--display);
+    font-size: 0.72rem;
+    line-height: 1;
+    color: var(--crema);
+    background: var(--verde);
+    border-radius: 50%;
+}
+
+/* ── Cómo jugar ── */
+
+.ayuda {
+    width: min(94vw, 520px);
+    margin: auto;
+    padding: clamp(1.1rem, 4vw, 1.6rem);
+
+    color: var(--navy);
+    background: var(--crema-2);
+    border: var(--borde);
+    border-radius: var(--r-panel);
+    box-shadow: var(--sombra-alta);
+
+    text-align: left;
+}
+
+.ayuda::backdrop { background: rgba(25, 63, 86, 0.55); }
+
+.ayuda-cab {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.ayuda-cerrar {
+    flex: 0 0 auto;
+    width: 36px;
+    min-height: 36px;
+    padding: 0;
+
+    font-size: 1.3rem;
+    line-height: 1;
+    color: var(--navy);
+    background: var(--crema);
+    box-shadow: 0 3px 0 var(--navy);
+}
+
+.ayuda-cerrar:hover:not(:disabled) { background: var(--melocoton); }
+
+.ayuda-cerrar:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 0 0 var(--navy);
+}
+
+.pasos {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.pasos li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.pasos p { margin: 0; }
+
+.paso-num {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 1.9rem;
+    height: 1.9rem;
+
+    font-family: var(--display);
+    font-size: 1rem;
+    color: var(--crema);
+    background: var(--verde);
+    border: var(--borde-fino);
+    border-radius: 50%;
+}
+
+.ayuda .apunte { text-align: left; }
+
+.separador {
+    border: none;
+    border-top: 2px dashed var(--rule, rgba(25, 63, 86, .25));
+    width: 100%;
+    margin: 0.5rem 0;
+}
+
 .campo-codigo {
     font-family: var(--display);
     font-size: clamp(1.3rem, 6vw, 1.8rem);
     letter-spacing: 0.24em;
     text-transform: uppercase;
     text-align: center;
+}
+
+.recuperar-admin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 1rem;
+    background: rgba(0, 130, 83, 0.08);
+    border: 2px solid var(--verde);
+    border-radius: var(--r-panel);
+}
+
+.recuperar-admin .display,
+.recuperar-admin .apunte,
+.recuperar-admin .ayuda-token {
+    text-align: center;
+}
+
+.recuperar-admin .display { font-size: clamp(1.2rem, 5vw, 1.55rem); }
+
+.ayuda-token {
+    margin: 0;
+    color: var(--navy);
+    font-size: 0.78rem;
+    line-height: 1.35;
+    opacity: 0.75;
 }
 
 .codigo-grande {
@@ -1399,501 +1566,4 @@ body.jugador:has(#app:not([hidden])) {
     .jugador .zona-ultimas { align-items: flex-start; align-self: start; }
     .jugador .zona-ultimas .ultimas { justify-content: flex-start; }
     .jugador .cabecera h1.display { font-size: clamp(0.95rem, 4vh, 1.4rem); }
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   PORTADA
-   ═══════════════════════════════════════════════════════════════
-
-   Barra, presentación, las tres puertas de entrada y el pie. Todo cuelga de
-   body.portada-app, así que ninguna otra vista se entera de estas reglas.
-   ═══════════════════════════════════════════════════════════════ */
-
-body.portada-app {
-    padding: 0;
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-
-}
-
-/* ── Barra superior ── */
-
-.barra {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-    padding: clamp(0.6rem, 1.6vw, 1rem) clamp(0.9rem, 3vw, 2.2rem);
-    background: var(--crema);
-    border-bottom: 2px solid rgba(25, 63, 86, .12);
-}
-
-.marca {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.7rem;
-    text-decoration: none;
-}
-
-.marca-icono {
-    width: clamp(38px, 5vw, 52px);
-    height: auto;
-    border-radius: clamp(9px, 1.4vw, 14px);
-    display: block;
-}
-
-.marca-texto {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: clamp(1.1rem, 2.6vw, 1.6rem);
-    text-transform: uppercase;
-    letter-spacing: -0.01em;
-    line-height: 1;
-}
-
-.marca-texto b { color: var(--verde); font-weight: 700; }
-.marca-texto i { color: var(--naranja); font-style: normal; }
-
-/* El acceso a la ayuda es un botón, pero no debe pesar como los de acción */
-.ayuda-abrir {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-height: 0;
-    padding: 0.35rem 0.5rem;
-    background: none;
-    border: none;
-    box-shadow: none;
-    color: var(--navy);
-    font-family: var(--texto);
-    font-size: clamp(0.82rem, 1.7vw, 0.95rem);
-    font-weight: 700;
-    text-transform: none;
-    letter-spacing: 0;
-}
-
-.ayuda-abrir:hover:not(:disabled) { background: none; color: var(--verde); }
-.ayuda-abrir:active:not(:disabled) { transform: none; box-shadow: none; }
-
-.ayuda-signo {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.7em;
-    height: 1.7em;
-    border: var(--borde-fino);
-    border-radius: 50%;
-    font-family: var(--display);
-    line-height: 1;
-}
-
-/* ── Cuerpo ── */
-
-.portada {
-    flex: 1 1 auto;
-    width: 100%;
-    max-width: 1240px;
-    margin-inline: auto;
-    padding: clamp(1.2rem, 3vw, 2.4rem) clamp(0.9rem, 3vw, 2.2rem) clamp(1.6rem, 4vw, 3rem);
-    display: flex;
-    flex-direction: column;
-    gap: clamp(1.4rem, 3.5vw, 2.6rem);
-}
-
-/* ── Presentación ── */
-
-/* La banda ocupa todo el ancho del body, que es exactamente el ancho visible
-   sin la barra de desplazamiento. Medir la loma con 100vw incluía esa barra y
-   dejaba unos píxeles de scroll horizontal en escritorio. */
-.hero-banda {
-    position: relative;
-    width: 100%;
-    overflow: clip;
-}
-
-.hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(1rem, 3vw, 2rem);
-    align-items: center;
-
-    width: 100%;
-    max-width: 1240px;
-    margin-inline: auto;
-    padding: clamp(1.2rem, 3vw, 2.4rem) clamp(0.9rem, 3vw, 2.2rem);
-
-    /* Hueco reservado para la loma: el texto y las ventajas terminan sobre
-       crema y la ilustración es lo único que se apoya en el verde. */
-    padding-bottom: clamp(2.5rem, 8vw, 5.5rem);
-}
-
-/* La loma verde va detrás de la ilustración y se estira hasta los bordes de
-   la ventana. Centrada con translate en vez de con márgenes negativos: así el
-   ancho de más no empuja la página ni saca scroll horizontal. */
-.hero-loma {
-    position: absolute;
-    left: 0;
-    bottom: -1px;
-    width: 100%;
-    height: clamp(74px, 11.5vw, 165px);
-    fill: var(--verde);
-    z-index: 0;
-    pointer-events: none;
-}
-
-.hero-texto,
-.hero-arte { position: relative; z-index: 1; }
-
-.hero-texto {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: clamp(0.5rem, 1.5vw, 0.9rem);
-}
-
-.hero-titulo {
-    margin: 0;
-    font-family: var(--display);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: -0.02em;
-    line-height: 0.86;
-    font-size: clamp(2.6rem, 9vw, 5.4rem);
-}
-
-.hero-titulo span { display: block; }
-.hero-bingo { color: var(--verde); }
-.hero-pro   { color: var(--naranja); }
-
-.hero-lema {
-    margin: 0;
-    color: var(--navy);
-    font-weight: 700;
-    font-size: clamp(1rem, 2.2vw, 1.25rem);
-}
-
-.hero-cuerpo {
-    margin: 0;
-    max-width: 46ch;
-    color: var(--navy);
-    opacity: 0.8;
-    font-size: clamp(0.88rem, 1.7vw, 1rem);
-    line-height: 1.55;
-}
-
-/* ── Las tres ventajas ── */
-
-.ventajas {
-    list-style: none;
-    margin: clamp(0.2rem, 1vw, 0.6rem) 0 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: clamp(0.7rem, 2vw, 1.6rem);
-}
-
-.ventaja {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-size: clamp(0.78rem, 1.5vw, 0.9rem);
-    font-weight: 700;
-    line-height: 1.25;
-    color: var(--navy);
-}
-
-.ventaja-icono,
-.tarjeta-icono {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-    border-radius: 50%;
-}
-
-.ventaja-icono { width: clamp(34px, 4vw, 44px); height: clamp(34px, 4vw, 44px); }
-.tarjeta-icono { width: clamp(38px, 4.4vw, 50px); height: clamp(38px, 4.4vw, 50px); }
-
-.ventaja-icono svg,
-.tarjeta-icono svg,
-.pie-icono svg,
-.escudo svg {
-    width: 58%;
-    height: 58%;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-.ventaja-icono.verde, .tarjeta-icono.verde { background: rgba(0, 130, 83, .16); color: var(--verde); }
-.ventaja-icono.rosa,  .tarjeta-icono.rosa  { background: var(--rosa);           color: var(--vino); }
-.ventaja-icono.ambar, .tarjeta-icono.ambar { background: var(--melocoton);      color: var(--vino); }
-
-/* La estrella y la corona se leen mejor rellenas */
-.ventaja-icono.ambar svg { fill: currentColor; }
-
-/* ── Ilustración ── */
-
-.hero-arte {
-    display: flex;
-    justify-content: center;
-
-    /* Se baja solo en lo visual, para que la ilustración se apoye en la loma
-       sin que su caja empuje el hueco reservado del hero. */
-    translate: 0 clamp(0.75rem, 3.2vw, 2.6rem);
-}
-
-.hero-arte img {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-width: 620px;
-}
-
-/* ── Las tres puertas de entrada ── */
-
-.tarjetas {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(0.8rem, 2vw, 1.4rem);
-    background: var(--crema-2);
-    border: var(--borde);
-    border-radius: var(--r-panel);
-    box-shadow: var(--sombra-alta);
-    padding: clamp(0.8rem, 2vw, 1.4rem);
-}
-
-.tarjeta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.7rem;
-    border-radius: clamp(16px, 2.5vw, 24px);
-    padding: clamp(0.9rem, 2.2vw, 1.4rem);
-}
-
-.tarjeta-verde { background: rgba(0, 130, 83, .10); }
-.tarjeta-rosa  { background: rgba(255, 179, 247, .30); }
-.tarjeta-ambar { background: rgba(249, 189, 126, .30); }
-
-.tarjeta-cab {
-    display: flex;
-    align-items: center;
-    gap: 0.7rem;
-}
-
-.tarjeta-titulo {
-    margin: 0;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: clamp(1.05rem, 2.2vw, 1.35rem);
-    line-height: 1.1;
-    color: var(--navy);
-}
-
-.tarjeta-verde .tarjeta-titulo { color: var(--verde); }
-.tarjeta .apunte { text-align: left; }
-
-/* El botón cierra la tarjeta: pegado abajo y a todo lo ancho, para que las
-   tres columnas terminen a la misma altura aunque el texto no mida igual. */
-.tarjeta > .auth,
-.tarjeta > button { margin-top: auto; width: 100%; }
-
-button.rosa:not(:disabled) { background: var(--rosa); color: var(--navy); }
-button.rosa:hover:not(:disabled) { background: #FF9BF2; }
-
-.ayuda-token {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    margin: 0;
-    text-align: left;
-    color: var(--navy);
-    font-size: 0.78rem;
-    line-height: 1.35;
-    opacity: 0.75;
-}
-
-.escudo {
-    display: inline-flex;
-    flex: 0 0 auto;
-    width: 1.5rem;
-    height: 1.5rem;
-    color: var(--verde);
-}
-
-.escudo svg { width: 100%; height: 100%; }
-
-/* ── Partida creada ── */
-
-.portada #creada { align-items: center; text-align: center; }
-.portada #creada .apunte { text-align: center; }
-
-/* ── Pie ── */
-
-.pie {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.6rem 1.5rem;
-    padding: clamp(0.8rem, 2vw, 1.2rem) clamp(0.9rem, 3vw, 2.2rem);
-    background: var(--navy);
-    color: var(--crema);
-    font-size: clamp(0.78rem, 1.6vw, 0.92rem);
-    font-weight: 700;
-}
-
-.pie p { margin: 0; }
-
-.pie-lado {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* El verde de marca sobre el navy del pie no se lee: aquí va una versión
-   aclarada, solo para texto sobre fondo oscuro. */
-.pie-lado b { color: #4FC98D; }
-.pie-corazon { color: var(--rosa); }
-
-.pie-icono {
-    display: inline-flex;
-    width: 1.4rem;
-    height: 1.4rem;
-    color: var(--crema);
-}
-
-.pie-icono svg { width: 100%; height: 100%; }
-
-.pie-confeti {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-}
-
-.pie-confeti i {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    display: inline-block;
-}
-
-.pie-confeti .c-verde   { background: var(--verde); }
-.pie-confeti .c-rosa    { background: var(--rosa); }
-.pie-confeti .c-naranja { background: var(--naranja); }
-.pie-confeti b { color: #FFC44D; font-size: 1.1rem; line-height: 1; }
-
-/* ── Cómo jugar ── */
-
-.ayuda {
-    width: min(92vw, 520px);
-    max-height: 86dvh;
-    margin: auto;
-    padding: clamp(1rem, 3vw, 1.6rem);
-    background: var(--crema-2);
-    color: var(--navy);
-    border: var(--borde);
-    border-radius: var(--r-panel);
-    box-shadow: var(--sombra-alta);
-}
-
-.ayuda::backdrop { background: rgba(25, 63, 86, .55); }
-
-.ayuda-cab {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 0.9rem;
-}
-
-.ayuda-cab .display { font-size: clamp(1.3rem, 4.5vw, 1.7rem); }
-
-.ayuda-cerrar {
-    min-height: 0;
-    width: 2.2rem;
-    height: 2.2rem;
-    padding: 0;
-    font-size: 1.4rem;
-    line-height: 1;
-    background: var(--crema);
-    color: var(--navy);
-    border: var(--borde-fino);
-    box-shadow: 0 3px 0 var(--navy);
-}
-
-.ayuda-cerrar:hover:not(:disabled) { background: var(--melocoton); }
-
-.pasos {
-    list-style: none;
-    margin: 0 0 0.9rem;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-}
-
-.pasos li {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-}
-
-.pasos p { margin: 0; font-size: 0.92rem; line-height: 1.5; }
-
-.paso-num {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    background: var(--verde);
-    color: var(--crema);
-    border: var(--borde-fino);
-    font-family: var(--display);
-    font-weight: 700;
-}
-
-.ayuda .apunte { text-align: left; }
-
-/* ── Puntos de corte de la portada ── */
-
-/* En cuanto hay sitio, las tarjetas van de dos en dos */
-@media (min-width: 640px) {
-    .tarjetas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .tarjeta-ambar { grid-column: 1 / -1; }
-}
-
-/* Escritorio: texto e ilustración lado a lado, y las tres tarjetas en fila */
-@media (min-width: 980px) {
-    .hero {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-        gap: clamp(1.5rem, 4vw, 3rem);
-    }
-
-    .tarjetas { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .tarjeta-ambar { grid-column: auto; }
-}
-
-/* Móvil: la ilustración va primero, que es lo que engancha */
-@media (max-width: 979px) {
-    .hero-arte { order: -1; translate: none; }
-    .hero-titulo { font-size: clamp(2.4rem, 13vw, 4rem); }
-
-    /* En una sola columna el texto ocupa todo el ancho y se metería justo
-       donde la loma sube. Aquí no acompaña a nada —la ilustración está
-       arriba del todo—, así que se retira y con ella su hueco reservado. */
-    .hero-loma { display: none; }
-    .hero { padding-bottom: 0; }
-
-    .pie { justify-content: center; text-align: center; }
-    .pie-confeti { order: 3; }
 }
