@@ -4,8 +4,16 @@ let card = null;
 let drawnNumbers = [];
 let marcados = [];
 let currentPattern = "FULL";
-let bloqueado = false;
+let terminada = false;
 let miNombre = "";
+
+// Podio de la sala: cuántos premios reparte y quién los lleva
+let ganadores = [];
+let maxGanadores = 1;
+
+// bloqueado = no puedo tocar el cartón, sea porque la partida acabó o porque
+// yo ya cobré mi premio y el resto sigue jugando por los que quedan.
+let bloqueado = false;
 
 const $ = id => document.getElementById(id);
 
@@ -64,7 +72,10 @@ socket.on("marcados", (lista) => {
 socket.on("estado", (estado) => {
     drawnNumbers = estado.drawn.slice();
     currentPattern = estado.pattern;
-    bloqueado = estado.gameLocked;
+
+    terminada = estado.gameLocked;
+    ganadores = estado.ganadores || [];
+    maxGanadores = estado.maxGanadores || 1;
 
     if (drawnNumbers.length) mostrarNumero(drawnNumbers[drawnNumbers.length - 1]);
     else $("current").innerText = "";
@@ -72,12 +83,14 @@ socket.on("estado", (estado) => {
     $("status").innerText = etiquetaPatron(currentPattern);
     pintarMiniPatron($("miniPatron"), currentPattern);
 
-    aplicarBloqueo(bloqueado);
+    refrescarBloqueo();
     renderUltimas();
     actualizarCasillas();
 
-    // Quien llega con la partida ya ganada también ve quién ganó
-    if (estado.ganador) mostrarGanador(estado.ganador, false);
+    // Al recargar solo recuperamos el panel si la partida ya acabó o si yo
+    // soy uno de los ganadores; si no, tapa el cartón de quien sigue jugando.
+    if (ganadores.length && (terminada || miPuesto() !== null)) mostrarPodio(null, false);
+    else $("winner").hidden = true;
 });
 
 socket.on("pattern", (p) => {
@@ -115,8 +128,8 @@ socket.on("progreso", (datos) => {
 });
 
 socket.on("gameLocked", (locked) => {
-    bloqueado = locked;
-    aplicarBloqueo(locked);
+    terminada = locked;
+    refrescarBloqueo();
 });
 
 socket.on("bingoRechazado", (datos) => {
@@ -129,10 +142,37 @@ socket.on("bingoRechazado", (datos) => {
     );
 });
 
-socket.on("winner", (ganador) => mostrarGanador(ganador, true));
+socket.on("winner", (datos) => {
+    ganadores = datos.ganadores || [];
+    maxGanadores = datos.maxGanadores || 1;
+    terminada = !!datos.terminada;
+
+    refrescarBloqueo();
+
+    const ganador = datos.ganador;
+    const soyYo = ganador && ganador.jugadorId === leerAlmacen(claveJugador);
+
+    // Mientras queden puestos, el bingo ajeno se avisa sin tapar el cartón
+    if (terminada || soyYo) {
+        mostrarPodio(ganador, true);
+    } else {
+        aviso(
+            medalla(ganador.puesto) + " " + ganador.nombre + " se llevó el " +
+            textoPuesto(ganador.puesto) + " · sigue jugando",
+            "ok"
+        );
+    }
+});
+
+socket.on("bingoRepetido", () => {
+    aviso("Ya tienes tu premio: deja que los demás peleen por los que faltan", "info");
+});
 
 socket.on("reset", () => {
     marcados = [];
+    ganadores = [];
+    terminada = false;
+    refrescarBloqueo();
     $("current").innerText = "";
     $("winner").hidden = true;
     renderUltimas();
@@ -157,31 +197,88 @@ socket.on("disconnect", () => {
 
 /* ── Pintado ── */
 
+// Mi puesto en el podio, o null si todavía no he ganado
+function miPuesto() {
+    const yo = leerAlmacen(claveJugador);
+    const mio = ganadores.find(g => g.jugadorId && g.jugadorId === yo);
+    return mio ? mio.puesto : null;
+}
+
+function refrescarBloqueo() {
+    aplicarBloqueo(terminada || miPuesto() !== null);
+}
+
 function aplicarBloqueo(locked) {
+    bloqueado = locked;
+
     $("bingoBtn").disabled = locked;
-    $("estadoPartida").hidden = !locked;
     $("carton").classList.toggle("bloqueado", locked);
     if (locked) $("progreso").innerText = "";
+
+    const estado = $("estadoPartida");
+    const puesto = miPuesto();
+
+    if (terminada) {
+        estado.innerText = maxGanadores > 1
+            ? "Podio completo · reinicia para jugar otra"
+            : "Partida terminada";
+    } else if (puesto !== null) {
+        estado.innerText = medalla(puesto) + " Ya ganaste el " + textoPuesto(puesto) +
+            " · siguen jugando por " + (maxGanadores - ganadores.length === 1
+                ? "1 puesto" : (maxGanadores - ganadores.length) + " puestos");
+    }
+
+    estado.hidden = !locked;
     actualizarCasillas();
 }
 
-function mostrarGanador(ganador, celebrar) {
-    const soyYo = ganador.jugadorId && ganador.jugadorId === leerAlmacen(claveJugador);
+// Un solo panel sirve para "acabas de ganar", "ganó otro" y "así quedó el
+// podio". `ganador` es el que acaba de cantar, o null al reconstruir estado.
+function mostrarPodio(ganador, celebrar) {
+    const yo = leerAlmacen(claveJugador);
+
+    // Al reconstruir estado no llega ningún ganador concreto: si yo estoy en el
+    // podio, el destacado soy yo; si no, se resume el marcador.
+    const destacado = ganador ||
+        ganadores.find(g => g.jugadorId && g.jugadorId === yo) || null;
+
+    const soyYo = !!destacado && destacado.jugadorId && destacado.jugadorId === yo;
     const panel = $("winner");
+    const restan = maxGanadores - ganadores.length;
 
-    panel.querySelector(".winner-title").innerText =
-        soyYo ? "🎉 ¡Ganaste!" : "🏆 " + ganador.nombre + " cantó bingo";
+    let titulo;
+    if (soyYo) titulo = maxGanadores > 1
+        ? medalla(destacado.puesto) + " ¡" + textoPuesto(destacado.puesto) + "!"
+        : "🎉 ¡Ganaste!";
+    else if (destacado) titulo = medalla(destacado.puesto) + " " + destacado.nombre + " cantó bingo";
+    else titulo = "🏆 Partida terminada";
 
-    panel.querySelector(".winner-sub").innerText =
-        soyYo
-            ? "Tu cartón #" + ganador.cardId + " completó el patrón"
-            : "Se llevó la partida con el cartón #" + ganador.cardId;
+    let sub;
+    if (soyYo) {
+        sub = "Tu cartón #" + destacado.cardId + " completó el patrón";
+    } else if (destacado) {
+        sub = "Se lleva el " + textoPuesto(destacado.puesto) + " con el cartón #" + destacado.cardId;
+    } else {
+        sub = "Ganadores " + ganadores.length + " de " + maxGanadores;
+    }
+
+    if (!terminada && restan > 0) {
+        sub += restan === 1
+            ? " · queda 1 puesto por ganar"
+            : " · quedan " + restan + " puestos por ganar";
+    }
+
+    panel.querySelector(".winner-title").innerText = titulo;
+    panel.querySelector(".winner-sub").innerText = sub;
+    pintarPodio($("winnerPodio"), ganadores, maxGanadores);
 
     panel.hidden = false;
 
     if (celebrar && soyYo) {
         lanzarConfeti();
-        decir("¡Bingo! Has ganado");
+        decir(maxGanadores > 1
+            ? "¡Bingo! Has ganado el " + textoPuesto(destacado.puesto)
+            : "¡Bingo! Has ganado");
     }
 }
 

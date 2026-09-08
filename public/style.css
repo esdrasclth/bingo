@@ -1082,6 +1082,105 @@ button.chico {
 .lista-jugadores .quien { font-weight: 700; }
 .bola.chica { width: auto; min-width: 2rem; height: 1.8rem; font-size: 0.72rem; }
 
+/* ═══════════ PODIO (1 a 3 ganadores) ═══════════ */
+
+.podio {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.podio .puesto {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--crema);
+    border: var(--borde-fino);
+    border-radius: var(--r-pastilla);
+    padding: 0.35rem 0.5rem 0.35rem 0.75rem;
+    text-align: left;
+}
+
+/* El primer puesto se distingue sin depender solo del color de la medalla */
+.podio .puesto:first-child {
+    background: var(--melocoton);
+    box-shadow: var(--sombra);
+}
+
+.puesto-medalla { font-size: 1.25rem; line-height: 1; }
+
+.podio .quien {
+    font-weight: 700;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* ═══════════ OPCIONES AL CREAR LA PARTIDA ═══════════ */
+
+.opciones {
+    width: 100%;
+    margin: 0;
+    padding: 0.9rem 1rem 1rem;
+    border: var(--borde-fino);
+    border-radius: var(--r-panel);
+    background: var(--crema);
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.opciones legend {
+    padding: 0 0.5rem;
+    text-align: center;
+}
+
+.segmentado {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.opcion { flex: 1 1 6.5rem; }
+
+/* El radio real se mantiene enfocable: solo se esconde a la vista */
+.opcion input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.opcion span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0.5rem 0.6rem;
+    background: var(--crema-2);
+    border: var(--borde-fino);
+    border-radius: var(--r-pastilla);
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+}
+
+.opcion input:checked + span {
+    background: var(--verde);
+    color: var(--crema);
+    box-shadow: var(--sombra);
+}
+
+.opcion input:focus-visible + span {
+    outline: 3px solid var(--naranja);
+    outline-offset: 2px;
+}
+
 /* Progreso del patrón */
 
 .progreso {
@@ -1243,6 +1342,11 @@ body.proyeccion { padding: 0; }
     gap: clamp(.4rem, 1.5vh, 1rem);
     text-align: center;
     padding: clamp(1rem, 4vw, 2rem);
+}
+
+.celebracion-caja .podio {
+    width: min(100%, 34rem);
+    font-size: clamp(1rem, 2.2vw, 1.5rem);
 }
 
 .ganador-nombre {

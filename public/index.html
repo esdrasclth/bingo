@@ -61,6 +61,27 @@
         <h2 class="display">Nueva partida</h2>
         <p class="apunte">Serás el anfitrión: tú cantas las bolas y eliges el patrón.</p>
 
+        <fieldset class="opciones">
+            <legend class="etiqueta">¿Cuántos ganadores tendrá?</legend>
+
+            <div class="segmentado">
+                <label class="opcion">
+                    <input type="radio" name="maxGanadores" value="1" checked>
+                    <span>🥇 Solo 1</span>
+                </label>
+                <label class="opcion">
+                    <input type="radio" name="maxGanadores" value="2">
+                    <span>🥈 Hasta 2</span>
+                </label>
+                <label class="opcion">
+                    <input type="radio" name="maxGanadores" value="3">
+                    <span>🥉 Hasta 3</span>
+                </label>
+            </div>
+
+            <p class="apunte">Con más de uno, la partida sigue tras el primer bingo hasta llenar el podio.</p>
+        </fieldset>
+
         <button id="crearBtn" class="naranja" onclick="crearPartida()">🎉 Crear partida</button>
 
         <hr class="separador">
@@ -103,6 +124,7 @@
 
         <p class="etiqueta">Código de la partida</p>
         <p class="codigo-grande" id="codigoCreado"></p>
+        <p class="apunte" id="resumenGanadores"></p>
 
         <div class="enlaces">
             <div class="enlace">

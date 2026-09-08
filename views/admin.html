@@ -77,7 +77,7 @@
             <span class="dato">Jugando <b id="players">0</b></span>
         </div>
 
-        <p class="estado" id="estadoPartida" hidden>Partida terminada · reinicia para jugar otra</p>
+        <p class="estado" id="estadoPartida" hidden>Podio completo · reinicia para jugar otra</p>
     </header>
 
     <!-- El orden del DOM es el de móvil: patrón, bolas, compartir, mesa.
@@ -97,7 +97,8 @@
                 <option value="FULL">Cartón lleno</option>
                 <option value="HORIZONTAL">Línea horizontal</option>
                 <option value="VERTICAL">Línea vertical</option>
-                <option value="X">Diagonal X</option>
+                <option value="DIAGONAL">Diagonal</option>
+                <option value="X">X (dos diagonales)</option>
                 <option value="CROSS">Cruz</option>
                 <option value="CENTER_BOX">Cuadrado central</option>
             </select>
@@ -107,7 +108,9 @@
                 <button id="resetBtn" class="secundario" onclick="reset()">🔄 Reiniciar</button>
             </div>
 
+            <p class="apunte" id="cupoGanadores">Esta sala reparte 1 ganador</p>
             <p class="ganador" id="winner"></p>
+            <ol id="listaGanadores" class="podio" hidden></ol>
         </section>
 
         <section class="panel zona-bolas">

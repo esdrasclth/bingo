@@ -22,7 +22,8 @@ Crea una partida, comparte el enlace y permite que cada participante juegue desd
 - Vista de proyección con tablero, número actual y código QR.
 - Persistencia opcional de partidas y jugadores mediante Neon Postgres.
 - Recuperación del cartón y las marcas después de recargar la página.
-- Diferentes patrones de victoria: cartón lleno, líneas, diagonales, cruz y cuadro central.
+- Diferentes patrones de victoria: cartón lleno, líneas, diagonal, X (las dos diagonales), cruz y cuadro central.
+- Podio de 1, 2 o 3 ganadores, elegido por el anfitrión al crear la partida.
 - Validación del bingo en el servidor.
 - Interfaz adaptable para móviles, computadoras y pantallas compartidas.
 - Metadatos Open Graph, Twitter Cards, favicons e iconos PWA.

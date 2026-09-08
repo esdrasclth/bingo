@@ -16,12 +16,22 @@ $("ayuda").addEventListener("click", (e) => {
     if (!dentro) cerrarAyuda();
 });
 
+function ganadoresElegidos() {
+    const marcado = document.querySelector("input[name='maxGanadores']:checked");
+    const n = Number(marcado && marcado.value);
+    return n >= 1 && n <= 3 ? n : 1;
+}
+
 async function crearPartida() {
     const boton = $("crearBtn");
     boton.disabled = true;
 
     try {
-        const res = await fetch("/api/partidas", { method: "POST" });
+        const res = await fetch("/api/partidas", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ maxGanadores: ganadoresElegidos() })
+        });
         const datos = await res.json();
 
         if (!res.ok) {
@@ -30,7 +40,8 @@ async function crearPartida() {
             return;
         }
 
-        mostrarCreada(datos.codigo, datos.tokenAdmin);
+        // El cupo lo confirma el servidor, que es quien lo valida
+        mostrarCreada(datos.codigo, datos.tokenAdmin, datos.maxGanadores);
 
     } catch (e) {
         aviso("No hay conexión con el servidor", "error");
@@ -38,10 +49,14 @@ async function crearPartida() {
     }
 }
 
-function mostrarCreada(codigo, tokenAdmin) {
+function mostrarCreada(codigo, tokenAdmin, maxGanadores) {
     const base = location.origin;
 
     $("codigoCreado").innerText = codigo;
+
+    $("resumenGanadores").innerText = maxGanadores > 1
+        ? "🏆 Partida a " + maxGanadores + " ganadores"
+        : "🏆 Partida a 1 ganador";
     $("urlJugar").innerText = base + "/jugar/" + codigo;
     $("urlPantalla").innerText = base + "/pantalla/" + codigo;
     $("tokenAdmin").innerText = tokenAdmin;

@@ -96,6 +96,8 @@ async function migrar() {
                 bombo             JSONB NOT NULL DEFAULT '[]'::jsonb,
                 bloqueada         BOOLEAN NOT NULL DEFAULT false,
                 ganador           JSONB,
+                ganadores         JSONB NOT NULL DEFAULT '[]'::jsonb,
+                max_ganadores     INTEGER NOT NULL DEFAULT 1,
                 contador_carton   INTEGER NOT NULL DEFAULT 1,
                 creada            TIMESTAMPTZ NOT NULL DEFAULT now(),
                 ultima_actividad  TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -111,6 +113,15 @@ async function migrar() {
                 marcados   JSONB NOT NULL DEFAULT '[]'::jsonb,
                 creado     TIMESTAMPTZ NOT NULL DEFAULT now()
             )`;
+
+        // Bases anteriores al podio: se añaden las columnas y el ganador
+        // único que ya hubiera guardado pasa a ser el primer puesto.
+        await sql`ALTER TABLE partidas ADD COLUMN IF NOT EXISTS ganadores JSONB NOT NULL DEFAULT '[]'::jsonb`;
+        await sql`ALTER TABLE partidas ADD COLUMN IF NOT EXISTS max_ganadores INTEGER NOT NULL DEFAULT 1`;
+        await sql`
+            UPDATE partidas
+               SET ganadores = jsonb_build_array(ganador || jsonb_build_object('puesto', 1))
+             WHERE ganador IS NOT NULL AND ganadores = '[]'::jsonb`;
 
         await sql`CREATE INDEX IF NOT EXISTS jugadores_partida_idx ON jugadores (partida)`;
         await sql`CREATE INDEX IF NOT EXISTS partidas_actividad_idx ON partidas (ultima_actividad)`;
@@ -131,17 +142,19 @@ function guardarPartida(p, tokenHash) {
 
     programar("partida:" + p.codigo, () => sql`
             INSERT INTO partidas (codigo, token_admin_hash, patron, bolas, bombo,
-                                  bloqueada, ganador, contador_carton, ultima_actividad)
+                                  bloqueada, ganadores, max_ganadores,
+                                  contador_carton, ultima_actividad)
             VALUES (${p.codigo}, ${tokenHash}, ${p.currentPattern},
                     ${JSON.stringify(p.drawn)}, ${JSON.stringify(p.numbers)},
-                    ${p.gameLocked}, ${p.ganador ? JSON.stringify(p.ganador) : null},
+                    ${p.gameLocked}, ${JSON.stringify(p.ganadores)}, ${p.maxGanadores},
                     ${p.cardCounter}, now())
             ON CONFLICT (codigo) DO UPDATE SET
                 patron           = EXCLUDED.patron,
                 bolas            = EXCLUDED.bolas,
                 bombo            = EXCLUDED.bombo,
                 bloqueada        = EXCLUDED.bloqueada,
-                ganador          = EXCLUDED.ganador,
+                ganadores        = EXCLUDED.ganadores,
+                max_ganadores    = EXCLUDED.max_ganadores,
                 contador_carton  = EXCLUDED.contador_carton,
                 ultima_actividad = now()`);
 }
@@ -176,7 +189,7 @@ async function cargarTodo() {
     try {
         const filas = await sql`
             SELECT codigo, token_admin_hash, patron, bolas, bombo, bloqueada,
-                   ganador, contador_carton,
+                   ganadores, max_ganadores, contador_carton,
                    EXTRACT(EPOCH FROM ultima_actividad) * 1000 AS actividad
             FROM partidas
             ORDER BY ultima_actividad DESC`;
@@ -199,7 +212,8 @@ async function cargarTodo() {
             bolas: f.bolas || [],
             bombo: f.bombo || [],
             bloqueada: f.bloqueada,
-            ganador: f.ganador || null,
+            ganadores: f.ganadores || [],
+            maxGanadores: f.max_ganadores || 1,
             contadorCarton: f.contador_carton,
             actividad: Number(f.actividad),
             jugadores: porPartida.get(f.codigo) || []

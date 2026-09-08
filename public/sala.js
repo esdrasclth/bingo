@@ -8,7 +8,8 @@ const ETIQUETAS = {
     FULL: "Cartón lleno",
     HORIZONTAL: "Línea horizontal",
     VERTICAL: "Línea vertical",
-    X: "Diagonal X",
+    DIAGONAL: "Diagonal",
+    X: "X (dos diagonales)",
     CROSS: "Cruz",
     CENTER_BOX: "Cuadrado central"
 };
@@ -18,6 +19,7 @@ const FORMAS = {
     FULL:       () => true,
     HORIZONTAL: i => Math.floor(i / 5) === 2,
     VERTICAL:   i => i % 5 === 2,
+    DIAGONAL:   i => { const r = Math.floor(i / 5), c = i % 5; return r === c; },
     X:          i => { const r = Math.floor(i / 5), c = i % 5; return r === c || r + c === 4; },
     CROSS:      i => { const r = Math.floor(i / 5), c = i % 5; return r === 2 || c === 2; },
     CENTER_BOX: i => { const r = Math.floor(i / 5), c = i % 5; return r > 0 && r < 4 && c > 0 && c < 4; }
@@ -36,6 +38,47 @@ function pintarMiniPatron(host, patron) {
         if (test(i)) celda.className = "on";
         host.appendChild(celda);
     }
+}
+
+/* ── Podio: la sala reparte entre 1 y 3 premios ── */
+
+const MEDALLAS = ["🥇", "🥈", "🥉"];
+
+const medalla = puesto => MEDALLAS[puesto - 1] || "🏅";
+
+const textoPuesto = puesto => puesto + ".º lugar";
+
+const textoCupo = max => max === 1 ? "1 ganador" : max + " ganadores";
+
+// Los nombres los escriben los jugadores: nunca van al DOM sin escapar
+function escapar(texto) {
+    const d = document.createElement("div");
+    d.textContent = texto;
+    return d.innerHTML;
+}
+
+// Lista <ol> del podio. Con un solo premio sobra la numeración, así que se
+// pinta solo cuando la sala reparte más de uno.
+function pintarPodio(host, ganadores, maxGanadores) {
+    if (!host) return;
+
+    const lista = ganadores || [];
+
+    if (!lista.length || maxGanadores <= 1) {
+        host.innerHTML = "";
+        host.hidden = true;
+        return;
+    }
+
+    host.innerHTML = lista
+        .map(g => `<li class="puesto">
+                <span class="puesto-medalla" aria-hidden="true">${medalla(g.puesto)}</span>
+                <span class="quien">${escapar(g.nombre)}</span>
+                <span class="bola chica">#${g.cardId}</span>
+            </li>`)
+        .join("");
+
+    host.hidden = false;
 }
 
 function estadoConexion(ok) {

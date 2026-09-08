@@ -15,12 +15,13 @@ const io = new Server(server);
 app.use(express.json({ limit: "8kb" }));
 app.use(express.static("public", { index: false }));
 
-const PATRONES = ["FULL", "HORIZONTAL", "VERTICAL", "X", "CROSS", "CENTER_BOX"];
+const PATRONES = ["FULL", "HORIZONTAL", "VERTICAL", "DIAGONAL", "X", "CROSS", "CENTER_BOX"];
 
 // Sin 0/O ni 1/I/L: el código se dicta en voz alta y se teclea a mano
 const ALFABETO = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 
-const MAX_PARTIDAS       = 500;
+const MAX_PARTIDAS        = 500;
+const MAX_GANADORES       = 3;            // cupo máximo elegible al crear
 const MAX_JUGADORES       = 200;
 const VIDA_SIN_ACTIVIDAD  = 6 * 60 * 60 * 1000;   // 6 h
 const BARRIDO_CADA        = 15 * 60 * 1000;       // 15 min
@@ -52,15 +53,17 @@ class Jugador {
    servidor sostenga muchas salas a la vez sin que se pisen entre sí. */
 
 class Partida {
-    constructor(codigo, tokenHash) {
+    constructor(codigo, tokenHash, maxGanadores = 1) {
         this.codigo = codigo;
         this.tokenHash = tokenHash;
 
         this.numbers = Array.from({ length: 75 }, (_, i) => i + 1);
         this.drawn = [];
-        this.gameLocked = false;
         this.currentPattern = "FULL";
-        this.ganador = null;
+
+        // Cuántos premios reparte la sala y quién los lleva ya, en orden
+        this.maxGanadores = limitarGanadores(maxGanadores);
+        this.ganadores = [];
 
         this.jugadores = new Map();   // jugadorId -> Jugador
         this.porSocket = new Map();   // socket.id -> jugadorId
@@ -74,6 +77,33 @@ class Partida {
     }
 
     tocar() { this.ultimaActividad = Date.now(); }
+
+    // La partida se cierra sola al llenarse el cupo de ganadores: así no hay
+    // dos fuentes de verdad que se puedan desincronizar.
+    get gameLocked() {
+        return this.ganadores.length >= this.maxGanadores;
+    }
+
+    get plazasLibres() {
+        return Math.max(0, this.maxGanadores - this.ganadores.length);
+    }
+
+    yaGano(jugadorId) {
+        return this.ganadores.some(g => g.jugadorId === jugadorId);
+    }
+
+    // Apunta al jugador en el podio y devuelve su entrada
+    anotarGanador(jugador) {
+        const ganador = {
+            puesto: this.ganadores.length + 1,
+            cardId: jugador.carton.id,
+            nombre: jugador.nombre,
+            jugadorId: jugador.id
+        };
+
+        this.ganadores.push(ganador);
+        return ganador;
+    }
 
     get conectados() {
         let n = 0;
@@ -107,9 +137,8 @@ class Partida {
     reiniciar() {
         this.numbers = Array.from({ length: 75 }, (_, i) => i + 1);
         this.drawn = [];
-        this.gameLocked = false;
         this.currentPattern = "FULL";
-        this.ganador = null;
+        this.ganadores = [];
         this.usedCards.clear();
         this.cardCounter = 1;
 
@@ -133,7 +162,8 @@ class Partida {
             drawn: this.drawn,
             pattern: this.currentPattern,
             gameLocked: this.gameLocked,
-            ganador: this.ganador,
+            ganadores: this.ganadores,
+            maxGanadores: this.maxGanadores,
             jugadores: this.conectados,
             lista: this.listaJugadores()
         };
@@ -144,6 +174,12 @@ const partidas = new Map();
 const creacionesPorIp = new Map();
 const recuperacionesPorIp = new Map();
 const arranque = Date.now();
+
+// El cupo de ganadores llega del cliente: solo 1, 2 o 3 son valores válidos
+function limitarGanadores(valor) {
+    const n = Number(valor);
+    return Number.isInteger(n) && n >= 1 && n <= MAX_GANADORES ? n : 1;
+}
 
 // Fisher-Yates: sort(() => Math.random() - 0.5) no da una permutación uniforme
 function barajar(lista) {
@@ -204,12 +240,14 @@ function gruposDelPatron(pattern) {
         return [0, 1, 2, 3, 4].map(c => [0, 1, 2, 3, 4].map(r => idx(r, c)));
     }
 
-    if (pattern === "X") {
-        return [
-            [0, 1, 2, 3, 4].map(i => idx(i, i)),
-            [0, 1, 2, 3, 4].map(i => idx(i, 4 - i))
-        ];
-    }
+    const diagonalPrincipal = [0, 1, 2, 3, 4].map(i => idx(i, i));
+    const diagonalInversa = [0, 1, 2, 3, 4].map(i => idx(i, 4 - i));
+
+    // Basta con completar una de las dos diagonales.
+    if (pattern === "DIAGONAL") return [diagonalPrincipal, diagonalInversa];
+
+    // La X exige las dos diagonales completas (9 casillas).
+    if (pattern === "X") return [[...new Set([...diagonalPrincipal, ...diagonalInversa])]];
 
     if (pattern === "CROSS") {
         const cruz = new Set();
@@ -334,13 +372,16 @@ app.post("/api/partidas", (req, res) => {
     const codigo = codigoNuevo();
     const tokenAdmin = crypto.randomBytes(9).toString("base64url");
 
-    const partida = new Partida(codigo, hashToken(tokenAdmin));
+    // El anfitrión decide aquí cuántos premios reparte la sala: 1, 2 o 3
+    const maxGanadores = limitarGanadores(req.body?.maxGanadores);
+
+    const partida = new Partida(codigo, hashToken(tokenAdmin), maxGanadores);
     partidas.set(codigo, partida);
 
     // El token en claro se entrega una sola vez, aquí; después solo vive su hash
     bd.guardarPartida(partida, partida.tokenHash);
 
-    res.json({ codigo, tokenAdmin });
+    res.json({ codigo, tokenAdmin, maxGanadores });
 });
 
 // 🔎 Comprobar si una partida existe antes de mandar a nadie a una sala vacía
@@ -354,6 +395,8 @@ app.get("/api/partidas/:codigo", (req, res) => {
         jugadores: partida.conectados,
         bolas: partida.drawn.length,
         patron: partida.currentPattern,
+        ganadores: partida.ganadores.length,
+        maxGanadores: partida.maxGanadores,
         terminada: partida.gameLocked
     });
 });
@@ -534,6 +577,13 @@ io.on("connection", (socket) => {
     socket.on("checkBingo", () => {
         if (!partida || !jugador || partida.gameLocked) return;
 
+        // Un cartón cobra un solo premio: sin esto, el mismo jugador podría
+        // cantar tres veces seguidas y vaciar el podio él solo.
+        if (partida.yaGano(jugador.id)) {
+            socket.emit("bingoRepetido");
+            return;
+        }
+
         const faltan = faltanParaPatron(
             jugador.carton.data, jugador.marcados, partida.currentPattern
         );
@@ -543,17 +593,19 @@ io.on("connection", (socket) => {
             return;
         }
 
-        partida.gameLocked = true;
-        partida.ganador = {
-            cardId: jugador.carton.id,
-            nombre: jugador.nombre,
-            jugadorId: jugador.id
-        };
+        const ganador = partida.anotarGanador(jugador);
         partida.tocar();
         bd.guardarPartida(partida, partida.tokenHash);
 
-        io.to(partida.codigo).emit("winner", partida.ganador);
-        io.to(partida.codigo).emit("gameLocked", true);
+        io.to(partida.codigo).emit("winner", {
+            ganador,
+            ganadores: partida.ganadores,
+            maxGanadores: partida.maxGanadores,
+            terminada: partida.gameLocked
+        });
+
+        // Con cupo libre la partida sigue: solo se avisa del cierre al llenarlo
+        if (partida.gameLocked) io.to(partida.codigo).emit("gameLocked", true);
     });
 
     // 👑 Autenticación de admin, contra el token de ESTA partida
@@ -673,13 +725,14 @@ async function recuperarPartidas() {
     if (!guardadas.length) return 0;
 
     for (const fila of guardadas) {
-        const partida = new Partida(fila.codigo, fila.tokenHash);
+        const partida = new Partida(fila.codigo, fila.tokenHash, fila.maxGanadores);
 
-        partida.currentPattern = fila.patron;
+        partida.currentPattern = PATRONES.includes(fila.patron) ? fila.patron : "FULL";
         partida.drawn = fila.bolas;
         partida.numbers = fila.bombo;
-        partida.gameLocked = fila.bloqueada;
-        partida.ganador = fila.ganador;
+
+        // gameLocked se deriva del podio, no se restaura por separado
+        partida.ganadores = fila.ganadores.slice(0, partida.maxGanadores);
         partida.cardCounter = fila.contadorCarton;
         partida.ultimaActividad = fila.actividad;
 

@@ -4,6 +4,8 @@ const $ = id => document.getElementById(id);
 let salidas = [];
 let autenticado = false;
 let currentPattern = "FULL";
+let ganadores = [];
+let maxGanadores = 1;
 
 // El servidor marca isAdmin en el socket. Al reconectar llega un socket nuevo
 // sin esa marca, así que guardamos el token para volver a presentarlo.
@@ -108,13 +110,13 @@ socket.on("estado", (estado) => {
     $("currentPattern").innerText = etiquetaPatron(estado.pattern);
     pintarMiniPatron($("miniPatron"), estado.pattern);
 
+    ganadores = estado.ganadores || [];
+    maxGanadores = estado.maxGanadores || 1;
+
     aplicarBloqueo(estado.gameLocked);
     pintarSalidas();
     pintarJugadores(estado.lista, estado.jugadores);
-
-    $("winner").innerText = estado.ganador
-        ? "🏆 Ganó " + estado.ganador.nombre + " (cartón #" + estado.ganador.cardId + ")"
-        : "";
+    pintarGanadores();
 });
 
 socket.on("pattern", (p) => {
@@ -136,14 +138,26 @@ socket.on("players", (datos) => {
 
 socket.on("gameLocked", (locked) => aplicarBloqueo(locked));
 
-socket.on("winner", (ganador) => {
-    $("winner").innerText = "🏆 Ganó " + ganador.nombre + " (cartón #" + ganador.cardId + ")";
+socket.on("winner", (datos) => {
+    ganadores = datos.ganadores || [];
+    maxGanadores = datos.maxGanadores || 1;
+
+    pintarGanadores();
+
+    if (autenticado) {
+        aviso(
+            medalla(datos.ganador.puesto) + " " + datos.ganador.nombre +
+            " se llevó el " + textoPuesto(datos.ganador.puesto),
+            "ok"
+        );
+    }
 });
 
 socket.on("reset", () => {
     salidas = [];
+    ganadores = [];
     pintarSalidas();
-    $("winner").innerText = "";
+    pintarGanadores();
     if (autenticado) aviso("Partida reiniciada, cartones nuevos", "ok");
 });
 
@@ -172,6 +186,18 @@ function aplicarBloqueo(locked) {
     $("estadoPartida").hidden = !locked;
 }
 
+// Cupo de la sala y podio. El cupo se fija al crear la partida, así que aquí
+// solo se informa: el anfitrión ya no puede cambiarlo a mitad de juego.
+function pintarGanadores() {
+    $("cupoGanadores").innerText = "Esta sala reparte " + textoCupo(maxGanadores);
+
+    $("winner").innerText = ganadores.length
+        ? "🏆 Ganadores " + ganadores.length + " de " + maxGanadores
+        : "";
+
+    pintarPodio($("listaGanadores"), ganadores, maxGanadores);
+}
+
 function pintarSalidas() {
     const ultima = salidas[salidas.length - 1];
 
@@ -197,13 +223,6 @@ function pintarJugadores(lista, total) {
     host.innerHTML = lista
         .map(j => `<li><span class="quien">${escapar(j.nombre)}</span><span class="bola chica">#${j.carton}</span></li>`)
         .join("");
-}
-
-// Los nombres los escriben los jugadores: nunca van al DOM sin escapar
-function escapar(texto) {
-    const d = document.createElement("div");
-    d.textContent = texto;
-    return d.innerHTML;
 }
 
 function pintarEnlaces() {
