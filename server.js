@@ -88,6 +88,12 @@ class Partida {
         return Math.max(0, this.maxGanadores - this.ganadores.length);
     }
 
+    // El cupo solo se toca antes de la primera bola. Cambiarlo con el sorteo
+    // en marcha movería la meta a mitad de carrera; para eso está reiniciar.
+    get cupoEditable() {
+        return this.drawn.length === 0;
+    }
+
     yaGano(jugadorId) {
         return this.ganadores.some(g => g.jugadorId === jugadorId);
     }
@@ -164,6 +170,7 @@ class Partida {
             gameLocked: this.gameLocked,
             ganadores: this.ganadores,
             maxGanadores: this.maxGanadores,
+            cupoEditable: this.cupoEditable,
             jugadores: this.conectados,
             lista: this.listaJugadores()
         };
@@ -372,16 +379,15 @@ app.post("/api/partidas", (req, res) => {
     const codigo = codigoNuevo();
     const tokenAdmin = crypto.randomBytes(9).toString("base64url");
 
-    // El anfitrión decide aquí cuántos premios reparte la sala: 1, 2 o 3
-    const maxGanadores = limitarGanadores(req.body?.maxGanadores);
-
-    const partida = new Partida(codigo, hashToken(tokenAdmin), maxGanadores);
+    // La sala nace con un solo premio; el anfitrión ajusta el cupo desde su
+    // panel antes de cantar la primera bola.
+    const partida = new Partida(codigo, hashToken(tokenAdmin));
     partidas.set(codigo, partida);
 
     // El token en claro se entrega una sola vez, aquí; después solo vive su hash
     bd.guardarPartida(partida, partida.tokenHash);
 
-    res.json({ codigo, tokenAdmin, maxGanadores });
+    res.json({ codigo, tokenAdmin });
 });
 
 // 🔎 Comprobar si una partida existe antes de mandar a nadie a una sala vacía
@@ -634,6 +640,26 @@ io.on("connection", (socket) => {
         difundirProgreso(partida);
     });
 
+    // 🏆 Cupo de premios. Se admite solo con el bombo intacto: una vez cantada
+    // la primera bola queda fijo hasta que el anfitrión reinicie.
+    socket.on("setGanadores", (valor) => {
+        if (!esAdmin()) return;
+
+        if (!partida.cupoEditable) {
+            socket.emit("cupoFijado");
+            return;
+        }
+
+        partida.maxGanadores = limitarGanadores(valor);
+        partida.tocar();
+        bd.guardarPartida(partida, partida.tokenHash);
+
+        io.to(partida.codigo).emit("cupo", {
+            maxGanadores: partida.maxGanadores,
+            cupoEditable: partida.cupoEditable
+        });
+    });
+
     socket.on("draw", () => {
         if (!esAdmin()) return;
         if (partida.gameLocked || partida.numbers.length === 0) return;
@@ -646,6 +672,15 @@ io.on("connection", (socket) => {
         bd.guardarPartida(partida, partida.tokenHash);
 
         io.to(partida.codigo).emit("currentNumber", num);
+
+        // La primera bola cierra el cupo: se avisa una sola vez, al cruzarlo
+        if (partida.drawn.length === 1) {
+            io.to(partida.codigo).emit("cupo", {
+                maxGanadores: partida.maxGanadores,
+                cupoEditable: false
+            });
+        }
+
         difundirProgreso(partida);
     });
 

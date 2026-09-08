@@ -6,6 +6,7 @@ let autenticado = false;
 let currentPattern = "FULL";
 let ganadores = [];
 let maxGanadores = 1;
+let cupoEditable = true;
 
 // El servidor marca isAdmin en el socket. Al reconectar llega un socket nuevo
 // sin esa marca, así que guardamos el token para volver a presentarlo.
@@ -100,6 +101,11 @@ function setPattern() {
     socket.emit("setPattern", $("patternSelect").value);
 }
 
+function setGanadores() {
+    const marcado = document.querySelector("input[name='maxGanadores']:checked");
+    if (marcado) socket.emit("setGanadores", Number(marcado.value));
+}
+
 /* ── Estado ── */
 
 socket.on("estado", (estado) => {
@@ -112,6 +118,7 @@ socket.on("estado", (estado) => {
 
     ganadores = estado.ganadores || [];
     maxGanadores = estado.maxGanadores || 1;
+    cupoEditable = estado.cupoEditable !== false;
 
     aplicarBloqueo(estado.gameLocked);
     pintarSalidas();
@@ -130,6 +137,20 @@ socket.on("currentNumber", (num) => {
     salidas.push(num);
     pintarSalidas();
     cantarNumero(num);
+});
+
+socket.on("cupo", (datos) => {
+    maxGanadores = datos.maxGanadores;
+    cupoEditable = datos.cupoEditable;
+    pintarGanadores();
+});
+
+// Llega si se intentó cambiar el cupo con el sorteo ya empezado
+socket.on("cupoFijado", () => {
+    if (autenticado) {
+        aviso("El sorteo ya empezó: reinicia la partida para cambiar los ganadores", "error");
+    }
+    pintarGanadores();
 });
 
 socket.on("players", (datos) => {
@@ -156,6 +177,7 @@ socket.on("winner", (datos) => {
 socket.on("reset", () => {
     salidas = [];
     ganadores = [];
+    cupoEditable = true;
     pintarSalidas();
     pintarGanadores();
     if (autenticado) aviso("Partida reiniciada, cartones nuevos", "ok");
@@ -186,10 +208,21 @@ function aplicarBloqueo(locked) {
     $("estadoPartida").hidden = !locked;
 }
 
-// Cupo de la sala y podio. El cupo se fija al crear la partida, así que aquí
-// solo se informa: el anfitrión ya no puede cambiarlo a mitad de juego.
+// Cupo y podio. El selector se abre solo con el bombo intacto: en cuanto sale
+// la primera bola queda fijo hasta el siguiente reinicio.
 function pintarGanadores() {
-    $("cupoGanadores").innerText = "Esta sala reparte " + textoCupo(maxGanadores);
+    const radios = document.querySelectorAll("input[name='maxGanadores']");
+
+    for (const radio of radios) {
+        radio.checked = Number(radio.value) === maxGanadores;
+        radio.disabled = !cupoEditable;
+    }
+
+    $("zonaCupo").classList.toggle("fijada", !cupoEditable);
+
+    $("cupoGanadores").innerText = cupoEditable
+        ? "Se puede cambiar hasta que cantes la primera bola."
+        : "Fijado en " + textoCupo(maxGanadores) + " · reinicia la partida para cambiarlo.";
 
     $("winner").innerText = ganadores.length
         ? "🏆 Ganadores " + ganadores.length + " de " + maxGanadores

@@ -55,6 +55,11 @@ socket.on("pattern", (p) => {
     pintarMiniPatron($("miniPatron"), p);
 });
 
+socket.on("cupo", (datos) => {
+    maxGanadores = datos.maxGanadores;
+    pintarCupo();
+});
+
 socket.on("currentNumber", (num) => {
     salidas.push(num);
     pintarTablero();
@@ -113,10 +118,43 @@ function pintarTablero() {
     $("numbers").innerHTML = celdas.join("");
 }
 
+// Cuántos premios reparte el juego y cuántos van cantados
 function pintarCupo() {
-    $("cupoGanadores").innerText = maxGanadores > 1
+    $("cupoGanadores").innerText = ganadores.length + " / " + maxGanadores;
+
+    const restan = maxGanadores - ganadores.length;
+
+    $("cupoDetalle").innerText = restan <= 0
+        ? "podio completo"
+        : (restan === 1 ? "queda 1 por salir" : "quedan " + restan + " por salir");
+
+    pintarGanadoresFijos();
+}
+
+// Tira permanente bajo las últimas bolas: los nombres siguen ahí cuando el
+// cartel de felicitación ya se retiró.
+function pintarGanadoresFijos() {
+    const host = $("ganadoresFijos");
+
+    if (!ganadores.length) {
+        host.hidden = true;
+        $("tiraGanadores").innerHTML = "";
+        return;
+    }
+
+    $("ganadoresFijosTitulo").innerText = maxGanadores > 1
         ? "Ganadores " + ganadores.length + " de " + maxGanadores
-        : "";
+        : "Ganador";
+
+    $("tiraGanadores").innerHTML = ganadores
+        .map(g => `<li>
+                <span aria-hidden="true">${medalla(g.puesto)}</span>
+                <span class="quien">${escapar(g.nombre)}</span>
+                <span class="bola chica">#${g.cardId}</span>
+            </li>`)
+        .join("");
+
+    host.hidden = false;
 }
 
 // La celebración muestra a quien acaba de cantar y, si la sala reparte varios

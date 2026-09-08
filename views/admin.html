@@ -108,7 +108,27 @@
                 <button id="resetBtn" class="secundario" onclick="reset()">🔄 Reiniciar</button>
             </div>
 
-            <p class="apunte" id="cupoGanadores">Esta sala reparte 1 ganador</p>
+            <fieldset class="opciones" id="zonaCupo">
+                <legend class="etiqueta">Ganadores de la partida</legend>
+
+                <div class="segmentado">
+                    <label class="opcion">
+                        <input type="radio" name="maxGanadores" value="1" onchange="setGanadores()" checked>
+                        <span>🥇 Solo 1</span>
+                    </label>
+                    <label class="opcion">
+                        <input type="radio" name="maxGanadores" value="2" onchange="setGanadores()">
+                        <span>🥈 Hasta 2</span>
+                    </label>
+                    <label class="opcion">
+                        <input type="radio" name="maxGanadores" value="3" onchange="setGanadores()">
+                        <span>🥉 Hasta 3</span>
+                    </label>
+                </div>
+
+                <p class="apunte" id="cupoGanadores"></p>
+            </fieldset>
+
             <p class="ganador" id="winner"></p>
             <ol id="listaGanadores" class="podio" hidden></ol>
         </section>

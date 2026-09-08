@@ -76,6 +76,13 @@
             <p class="etiqueta">Número cantado</p>
             <p class="bola-enorme" id="current" aria-live="polite"></p>
             <div class="ultimas" id="ultimas"></div>
+
+            <!-- Los ganadores quedan aquí fijos, cuando el cartel de
+                 felicitación ya se retiró -->
+            <div class="ganadores-fijos" id="ganadoresFijos" hidden>
+                <p class="etiqueta" id="ganadoresFijosTitulo">Ganadores</p>
+                <ol class="tira-ganadores" id="tiraGanadores"></ol>
+            </div>
         </section>
 
         <!-- Patrón y QR -->
@@ -84,7 +91,10 @@
                 <p class="etiqueta">Patrón de victoria</p>
                 <p class="patron-nombre display" id="status">Cartón lleno</p>
                 <div class="mini grande" id="miniPatron" aria-hidden="true"></div>
-                <p class="etiqueta" id="cupoGanadores"></p>
+
+                <p class="etiqueta">Ganadores</p>
+                <p class="cupo-numero display" id="cupoGanadores">1</p>
+                <p class="etiqueta" id="cupoDetalle">en juego</p>
             </section>
 
             <section class="panel bloque-qr">

@@ -99,6 +99,11 @@ socket.on("pattern", (p) => {
     pintarMiniPatron($("miniPatron"), p);
 });
 
+// El anfitrión puede ajustar el cupo mientras no haya empezado el sorteo
+socket.on("cupo", (datos) => {
+    maxGanadores = datos.maxGanadores;
+});
+
 socket.on("currentNumber", (num) => {
     drawnNumbers.push(num);
     mostrarNumero(num);
