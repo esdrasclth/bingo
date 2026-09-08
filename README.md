@@ -6,6 +6,11 @@
 
 ### [🎉 Jugar ahora en bingo.brandsofts.com](https://bingo.brandsofts.com/)
 
+[![Licencia MIT](https://img.shields.io/badge/licencia-MIT-008253)](LICENSE)
+[![Node.js 18+](https://img.shields.io/badge/node-%E2%89%A518-008253)](https://nodejs.org/)
+[![Socket.IO](https://img.shields.io/badge/tiempo%20real-Socket.IO-FF751F)](https://socket.io/)
+[![Contribuciones bienvenidas](https://img.shields.io/badge/contribuciones-bienvenidas-FF751F)](CONTRIBUTING.md)
+
 Crea una partida, comparte el enlace y permite que cada participante juegue desde su teléfono mientras el anfitrión controla el sorteo y una pantalla común muestra el progreso.
 
 ![Portada de Bingo PRO](public/branding/og-cover.png)
@@ -139,6 +144,12 @@ Bingo PRO mantiene el estado activo de las salas en memoria y utiliza conexiones
 - Las salas inactivas se eliminan automáticamente.
 - Las credenciales locales están excluidas mediante `.gitignore` y `.dockerignore`.
 
+## Contribuir
+
+Las propuestas y los reportes de fallos son bienvenidos. La guía [CONTRIBUTING.md](CONTRIBUTING.md) explica cómo levantar el entorno, qué reglas de diseño sostiene el proyecto y qué comprobar antes de abrir un pull request.
+
+Si encuentras una vulnerabilidad, escribe a <Esdras.Clother@outlook.com> en lugar de abrir un issue público.
+
 ## Licencia
 
-Este proyecto se distribuye bajo la licencia ISC indicada en `package.json`.
+Este proyecto se distribuye bajo la licencia [MIT](LICENSE).

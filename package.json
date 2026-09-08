@@ -6,10 +6,26 @@
   "scripts": {
     "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "bingo",
+    "multijugador",
+    "tiempo-real",
+    "socket.io",
+    "websockets",
+    "juego",
+    "express"
+  ],
+  "author": "Esdras Clother <Esdras.Clother@outlook.com> (https://github.com/esdrasclth)",
+  "license": "MIT",
   "type": "commonjs",
+  "homepage": "https://bingo.brandsofts.com/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/esdrasclth/bingo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/esdrasclth/bingo/issues"
+  },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
     "dotenv": "^17.4.2",
