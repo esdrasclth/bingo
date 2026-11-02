@@ -1726,3 +1726,22 @@ body.jugador:has(#app:not([hidden])) {
     .jugador .zona-ultimas .ultimas { justify-content: flex-start; }
     .jugador .cabecera h1.display { font-size: clamp(0.95rem, 4vh, 1.4rem); }
 }
+
+/* ── Créditos al pie de la portada ── */
+
+.creditos {
+    text-align: center;
+    font-size: 0.86em;
+    color: var(--navy);
+    opacity: 0.7;
+    padding: 0.25rem 0 1.5rem;
+}
+
+.creditos a {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.creditos a:hover { opacity: 0.85; }

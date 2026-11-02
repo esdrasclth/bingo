@@ -3,8 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>Bingo PRO · Bingo multijugador en tiempo real</title>
-    <meta name="description" content="Crea una partida de bingo en un minuto, comparte el enlace y juega con quien quieras desde el móvil.">
+    <title>Bingo PRO · Bingo online gratis y multijugador en tiempo real</title>
+    <meta name="description" content="Juega bingo online gratis con amigos y familia: crea una partida en un minuto, comparte el enlace y cada quien juega desde su móvil. Sin registros ni descargas.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="author" content="Esdras Clother">
     <meta name="application-name" content="Bingo PRO">
     <meta name="theme-color" content="#008253">
     <meta name="mobile-web-app-capable" content="yes">
@@ -39,6 +41,30 @@
     <meta name="twitter:image" content="{{ORIGIN}}/branding/og-cover.png">
     <meta name="twitter:image:alt" content="Bingo PRO: bingo multijugador en tiempo real.">
     <link rel="stylesheet" href="style.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Bingo PRO",
+      "url": "{{ORIGIN}}/",
+      "description": "Bingo multijugador en tiempo real: crea una partida, comparte el enlace y juega desde el móvil.",
+      "applicationCategory": "GameApplication",
+      "operatingSystem": "Web",
+      "inLanguage": "es",
+      "isAccessibleForFree": true,
+      "image": "{{ORIGIN}}/branding/og-cover.png",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Esdras Clother",
+        "url": "https://github.com/esdrasclth"
+      }
+    }
+    </script>
     <script src="/analitica.js"></script>
     <script defer src="https://analytics.brandsofts.com/m.js" data-website-id="777f806e-01bc-4507-a647-4b5e0b293c39"
             data-domains="bingo.brandsofts.com" data-before-send="normalizarVisita"></script>
@@ -132,6 +158,11 @@
 
         <button class="naranja" id="irPanel">👑 Abrir mi panel</button>
     </section>
+
+    <footer class="creditos">
+        Desarrollado por
+        <a href="https://github.com/esdrasclth" target="_blank" rel="author noopener">Esdras Clother</a>
+    </footer>
 
 </div>
 

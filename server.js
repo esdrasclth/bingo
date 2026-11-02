@@ -350,6 +350,39 @@ app.get("/api/salud", (req, res) => {
     });
 });
 
+// 🔎 Buscadores
+// Las salas son temporales y privadas: no deben aparecer en Google. Tampoco
+// las direcciones automáticas de Dokploy (sslip.io, traefik.me), que duplican
+// la portada con otro dominio.
+const DOMINIO_AUTOMATICO = /\.(sslip\.io|traefik\.me)$/i;
+
+app.use((req, res, next) => {
+    const host = String(req.get("x-forwarded-host") || req.get("host") || "").split(":")[0];
+    if (DOMINIO_AUTOMATICO.test(host) || /^\/(jugar|admin|pantalla)\//.test(req.path)) {
+        res.set("X-Robots-Tag", "noindex, nofollow");
+    }
+    next();
+});
+
+app.get("/robots.txt", (req, res) => {
+    res.type("text/plain").send(
+        "User-agent: *\n" +
+        "Allow: /\n" +
+        "Disallow: /api/\n\n" +
+        `Sitemap: ${origenPublico(req)}/sitemap.xml\n`
+    );
+});
+
+app.get("/sitemap.xml", (req, res) => {
+    res.type("application/xml").send(
+        '<?xml version="1.0" encoding="UTF-8"?>\n' +
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+        `  <url><loc>${origenPublico(req)}/</loc>` +
+        `<lastmod>${new Date(arranque).toISOString().slice(0, 10)}</lastmod></url>\n` +
+        "</urlset>\n"
+    );
+});
+
 app.get("/", pagina("public", "index.html"));
 app.get("/jugar/:codigo", pagina("views", "jugar.html"));
 app.get("/admin/:codigo", pagina("views", "admin.html"));
