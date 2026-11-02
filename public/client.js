@@ -48,11 +48,18 @@ function entrar(nombre) {
     if (socket.connected) unirseAMesa();
 }
 
+// Las reconexiones vuelven a unirse a la mesa: solo la primera cuenta.
+let unionRegistrada = false;
+
 function unirseAMesa() {
     unirseASala(socket, "jugador", (respuesta) => {
         miNombre = respuesta.nombre || miNombre;
         $("datoNombre").innerText = miNombre;
         pintarBotonVoz($("vozBtn"));
+        if (!unionRegistrada) {
+            unionRegistrada = true;
+            registrar("jugador_unido");
+        }
     });
 }
 
@@ -156,6 +163,7 @@ socket.on("winner", (datos) => {
 
     const ganador = datos.ganador;
     const soyYo = ganador && ganador.jugadorId === leerAlmacen(claveJugador);
+    if (soyYo) registrar("bingo_ganado", { puesto: ganador.puesto });
 
     // Mientras queden puestos, el bingo ajeno se avisa sin tapar el cartón
     if (terminada || soyYo) {

@@ -31,6 +31,7 @@ async function crearPartida() {
         }
 
         mostrarCreada(datos.codigo, datos.tokenAdmin);
+        registrar("partida_creada");
 
     } catch (e) {
         aviso("No hay conexión con el servidor", "error");
